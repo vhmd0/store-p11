@@ -2,148 +2,332 @@
 {% load i18n %}
 {% load bootstrap_icons %}
 
-{% block title %}{% trans "Store" %} — E-Shop{% endblock %}
+{% block title %}{% trans "Store" %} — SMART S3R{% endblock %}
 
 {% block content %}
 
-{# ── Page Header ── #}
-<div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --accent:     #10b981;
+  --accent-mid: rgba(16,185,129,0.12);
+  --accent-dim: rgba(16,185,129,0.07);
+  --bg:         #f8fafc;
+  --white:      #ffffff;
+  --text-1:     #0f172a;
+  --text-2:     #475569;
+  --text-3:     #94a3b8;
+  --border:     #e2e8f0;
+  --border-2:   #cbd5e1;
+  --radius-sm:  10px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --font-head:  'Sora', sans-serif;
+  --font-body:  'DM Sans', sans-serif;
+}
+body { font-family: var(--font-body); background: var(--bg); }
+
+/* ── Page Header ───────────────────────────── */
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 2rem; gap: 12px; flex-wrap: wrap;
+}
+.sec-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  color: var(--accent); font-family: var(--font-head);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 13px; border-radius: 100px;
+  margin-bottom: 0.4rem;
+}
+.page-title {
+  font-family: var(--font-head); font-size: 1.6rem; font-weight: 800;
+  color: var(--text-1); letter-spacing: -0.02em; margin-bottom: 0.1rem;
+}
+.page-count { font-size: 0.82rem; color: var(--text-3); }
+
+/* ── Sort Select ───────────────────────────── */
+.sort-shell {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 7px 14px;
+  transition: border-color 0.2s;
+}
+.sort-shell:focus-within { border-color: var(--accent); }
+.sort-label { font-size: 0.75rem; font-weight: 600; color: var(--text-3); white-space: nowrap; }
+.sort-select {
+  background: transparent; border: none; outline: none;
+  font-family: var(--font-body); font-size: 0.85rem;
+  color: var(--text-1); font-weight: 500; cursor: pointer;
+  padding-right: 4px;
+}
+
+/* ── Layout ────────────────────────────────── */
+.store-layout { display: flex; gap: 20px; align-items: flex-start; }
+
+/* ── Sidebar ───────────────────────────────── */
+.sidebar {
+  flex: 0 0 200px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  position: sticky; top: 80px;
+}
+@media (max-width: 991px) { .sidebar { display: none; } }
+
+.sidebar-title {
+  font-family: var(--font-head); font-size: 0.68rem; font-weight: 700;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.cat-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  font-size: 0.82rem; color: var(--text-2); text-decoration: none;
+  transition: background 0.18s, color 0.18s;
+  margin-bottom: 2px;
+}
+.cat-link:hover { background: var(--bg); color: var(--text-1); }
+.cat-link.active {
+  background: var(--accent-dim); color: var(--accent);
+  font-weight: 600; border: 1px solid rgba(16,185,129,0.18);
+}
+.cat-link .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+
+/* ── Grid ──────────────────────────────────── */
+.grid-area { flex: 1; min-width: 0; }
+
+/* ── Product Card ──────────────────────────── */
+.prod-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  overflow: hidden;
+  text-decoration: none;
+  display: flex; flex-direction: column; height: 100%;
+  transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+}
+.prod-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 32px rgba(16,185,129,0.1);
+}
+.prod-img-wrap {
+  aspect-ratio: 1/1; overflow: hidden;
+  background: var(--bg); position: relative;
+}
+.prod-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.35s;
+}
+.prod-card:hover .prod-img-wrap img { transform: scale(1.06); }
+.prod-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3); font-size: 2.5rem;
+}
+
+.prod-overlay {
+  position: absolute; inset: 0;
+  background: rgba(15,23,42,0.42);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 14px;
+  opacity: 0; transition: opacity 0.25s; z-index: 2;
+}
+.prod-card:hover .prod-overlay { opacity: 1; }
+
+.add-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--white); color: var(--text-1);
+  border: none; border-radius: 100px;
+  padding: 9px 20px;
+  font-family: var(--font-head); font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.18s; white-space: nowrap;
+}
+.add-btn:hover { background: var(--accent); color: #fff; }
+
+.prod-body {
+  padding: 12px 14px 16px;
+  flex: 1; display: flex; flex-direction: column;
+}
+.prod-brand {
+  font-size: 0.68rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+}
+.prod-name {
+  font-family: var(--font-head); font-size: 0.85rem; font-weight: 600;
+  color: var(--text-1); line-height: 1.4; flex: 1; margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.prod-price {
+  font-family: var(--font-head); font-size: 1rem; font-weight: 800; color: var(--text-1);
+}
+.prod-price span { font-size: 0.72rem; font-weight: 500; color: var(--text-3); margin-right: 3px; }
+
+/* ── Empty State ───────────────────────────── */
+.empty-state {
+  text-align: center; padding: 80px 20px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.empty-icon {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; color: var(--accent); margin: 0 auto 1.2rem;
+}
+.empty-state h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--text-1); margin-bottom: 0.4rem; }
+.empty-state p { font-size: 0.88rem; color: var(--text-2); margin-bottom: 1.2rem; }
+.clear-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--text-1); color: #fff; border: none;
+  border-radius: 100px; padding: 10px 24px;
+  font-family: var(--font-head); font-size: 0.85rem; font-weight: 700;
+  text-decoration: none; transition: all 0.2s;
+}
+.clear-btn:hover { background: #1e293b; color: #fff; }
+
+/* ── Pagination ────────────────────────────── */
+.pagination-wrap { margin-top: 2.5rem; display: flex; justify-content: center; }
+.page-item .page-link {
+  font-family: var(--font-head); font-size: 0.82rem; font-weight: 600;
+  color: var(--text-2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm) !important;
+  padding: 7px 13px; margin: 0 3px;
+  background: var(--white); transition: all 0.18s;
+}
+.page-item .page-link:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.page-item.active .page-link { background: var(--text-1); border-color: var(--text-1); color: #fff; }
+.page-item.disabled .page-link { opacity: 0.4; }
+
+/* ── Breadcrumb ────────────────────────────── */
+.breadcrumb { font-size: 0.8rem; margin-bottom: 1.4rem; }
+.breadcrumb-item a { color: var(--text-3); text-decoration: none; }
+.breadcrumb-item a:hover { color: var(--accent); }
+.breadcrumb-item.active { color: var(--text-2); }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--text-3); }
+</style>
+
+
+{# ── Breadcrumb ──────────────────────────────── #}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house me-1"></i>{% trans "Home" %}</a></li>
+    {% block extra_breadcrumb %}
+    <li class="breadcrumb-item active">{% trans "Store" %}</li>
+    {% endblock %}
+  </ol>
+</nav>
+
+{# ── Page Header ─────────────────────────────── #}
+<div class="page-header">
   <div>
-    <h1 class="h4 fw-bold mb-0">{% block page_title %}{% trans "Store" %}{% endblock %}</h1>
+    <div class="sec-badge"><i class="bi bi-bag-heart-fill"></i> {% trans "Shop" %}</div>
+    <h1 class="page-title">{% block page_title %}{% trans "All Products" %}{% endblock %}</h1>
     {% if page_obj.paginator.count %}
-    <small class="text-muted">
-      {% block page_subtitle %}
-      {% blocktrans with total=page_obj.paginator.count %}{{ total }} products{% endblocktrans %}
-      {% endblock %}
-    </small>
+      <p class="page-count">
+        {% block page_subtitle %}
+          {% blocktrans with total=page_obj.paginator.count %}{{ total }} products{% endblocktrans %}
+        {% endblock %}
+      </p>
     {% endif %}
   </div>
 
-  {# ── Sort ── #}
-  <form method="get" class="d-flex align-items-center gap-2">
+  <form method="get" class="sort-shell">
     {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
     {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
-    <select name="sort" class="form-select form-select-sm border-0 shadow-sm product-sort-select" onchange="this.form.submit()">
+    <span class="sort-label"><i class="bi bi-sort-down me-1"></i>{% trans "Sort" %}</span>
+    <select name="sort" class="sort-select" onchange="this.form.submit()">
       <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>{% trans "Newest" %}</option>
       <option value="price"       {% if current_sort == "price"       %}selected{% endif %}>{% trans "Price: Low → High" %}</option>
       <option value="-price"      {% if current_sort == "-price"      %}selected{% endif %}>{% trans "Price: High → Low" %}</option>
-      <option value="name"        {% if current_sort == "name"        %}selected{% endif %}>{% trans "Name A–Z" %}</option>
-      <option value="-name"       {% if current_sort == "-name"       %}selected{% endif %}>{% trans "Name Z–A" %}</option>
+      <option value="name"        {% if current_sort == "name"        %}selected{% endif %}>{% trans "A – Z" %}</option>
+      <option value="-name"       {% if current_sort == "-name"       %}selected{% endif %}>{% trans "Z – A" %}</option>
     </select>
   </form>
 </div>
 
-<div class="row g-4">
+{# ── Store Layout ────────────────────────────── #}
+<div class="store-layout">
 
-  {# ───────────── Sidebar ───────────── #}
-  <div class="col-lg-2 col-md-3 d-none d-lg-block">
+  {# ── Sidebar ── #}
+  <aside class="sidebar">
+    <p class="sidebar-title">{% trans "Categories" %}</p>
+    <a href="{% url 'products:products' %}?sort={{ current_sort }}"
+       class="cat-link {% if not current_category %}active{% endif %}">
+      <span>{% trans "All Products" %}</span>
+      {% if not current_category %}<span class="dot"></span>{% endif %}
+    </a>
+    {% for cat in categories %}
+    <a href="?category={{ cat.slug }}&sort={{ current_sort }}"
+       class="cat-link {% if current_category == cat.slug %}active{% endif %}">
+      <span>{{ cat.name }}</span>
+      {% if current_category == cat.slug %}<span class="dot"></span>{% endif %}
+    </a>
+    {% endfor %}
+  </aside>
 
-    {# Category filter #}
-    <div class="card border-0 shadow-sm rounded-3 mb-3">
-      <div class="card-body p-3">
-        <h6 class="fw-bold text-uppercase mb-3 category-header">
-          {% trans "Categories" %}
-        </h6>
-        <div class="list-group list-group-flush">
-          <a href="{% url 'products:products' %}&sort={{ current_sort }}"
-             class="list-group-item list-group-item-action border-0 px-0 py-1 fw-bold {% if not current_category %}text-dark{% else %}text-muted{% endif %}"
-             style="font-size: .8rem;">
-            {% trans "All Products" %}
-          </a>
-          {% for cat in categories %}
-          <a href="?category={{ cat.slug }}&sort={{ current_sort }}"
-             class="list-group-item list-group-item-action border-0 px-0 py-1 {% if current_category == cat.slug %}fw-bold text-dark{% else %}text-muted{% endif %}"
-             style="font-size: .8rem;">
-            {{ cat.name }}
-          </a>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-  </div>{# /sidebar #}
-
-  {# ───────────── Product Grid ───────────── #}
-  <div class="col-12 col-lg-10">
+  {# ── Product Grid ── #}
+  <div class="grid-area">
 
     {% if page_obj.object_list %}
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-grid">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3">
       {% for product in page_obj %}
+      <div class="col d-flex">
+        <div class="prod-card w-100">
 
-      {# ── Product Card ── #}
-      <div class="col">
-        {# The whole card is a link to the product detail page #}
-        <a href="{{ product.get_absolute_url }}"
-           class="text-decoration-none d-block h-100"
-           data-product-link="true">
-          <div class="card border-0 shadow-sm h-100 product-card">
-
-            <div class="position-relative overflow-hidden" style="aspect-ratio: 1/1;">
+          <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+            <div class="prod-img-wrap">
               {% if product.img %}
-                <img src="{{ product.img.url }}"
-                     class="card-img-top h-100 w-100 product-img"
-                     style="object-fit: cover; transition: transform .35s ease;"
-                     alt="{{ product.name }}">
+                <img src="{{ product.img.url }}" alt="{{ product.name }}">
               {% elif product.img_link %}
-                <img src="{{ product.img_link }}"
-                     class="card-img-top h-100 w-100 product-img"
-                     style="object-fit: cover; transition: transform .35s ease;"
-                     alt="{{ product.name }}">
+                <img src="{{ product.img_link }}" alt="{{ product.name }}">
               {% else %}
-                <div class="bg-light d-flex align-items-center justify-content-center h-100 text-muted">
-                  {% bs_icon 'image' size='2.5em' %}
-                </div>
+                <div class="prod-placeholder"><i class="bi bi-phone"></i></div>
               {% endif %}
 
-              {# ── Hover overlay: Add to Cart (stops navigation) ── #}
-              <div class="product-overlay position-absolute bottom-0 start-0 end-0 d-flex align-items-center justify-content-center"
-                   style="background: rgba(0,0,0,.55); padding: .6rem; transform: translateY(100%); transition: transform .3s ease; z-index: 2;">
+              <div class="prod-overlay">
                 {% if user.is_authenticated %}
-                  {# Logged in: submit directly #}
                   <form action="{% url 'cart:add' product.id %}" method="post" class="js-cart-form">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
-                    <button type="submit"
-                            class="btn btn-light btn-sm rounded-pill fw-bold d-flex align-items-center gap-2 px-4">
-                      {% bs_icon 'cart-plus' size='.95em' %}
-                      {% trans "Add to Cart" %}
+                    <button type="submit" class="add-btn">
+                      <i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}
                     </button>
                   </form>
                 {% else %}
-                  {# Guest: open register modal #}
-                  <button type="button"
-                          class="btn btn-light btn-sm rounded-pill fw-bold d-flex align-items-center gap-2 px-4"
-                          data-bs-toggle="modal" data-bs-target="#authModal">
-                    {% bs_icon 'cart-plus' size='.95em' %}
-                    {% trans "Add to Cart" %}
+                  <button type="button" class="add-btn" data-bs-toggle="modal" data-bs-target="#authModal">
+                    <i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}
                   </button>
                 {% endif %}
               </div>
-
-            </div>{# /image wrapper #}
-
-            <div class="card-body px-2 pt-2 pb-3 d-flex flex-column">
-              <p class="text-muted mb-0" style="font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;">
-                {{ product.brand.name }}
-              </p>
-              <span class="text-dark fw-semibold lh-sm mt-1 mb-auto"
-                 style="font-size: .85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                {{ product.name }}
-              </span>
-              <p class="fw-bold mb-0 mt-2">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ product.price }}</p>
             </div>
+          </a>
 
-          </div>{# /card #}
-        </a>
-      </div>{# /col #}
+          <div class="prod-body">
+            <div class="prod-brand">{{ product.brand.name }}</div>
+            <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+              <div class="prod-name">{{ product.name }}</div>
+            </a>
+            <div class="prod-price">
+              <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span>{{ product.price }}
+            </div>
+          </div>
 
+        </div>
+      </div>
       {% endfor %}
-    </div>{# /row #}
+    </div>
 
     {# ── Pagination ── #}
     {% if page_obj.has_other_pages %}
-    <nav class="mt-5 d-flex justify-content-center" aria-label="Products pagination">
-      <ul class="pagination pagination-sm">
+    <div class="pagination-wrap">
+      <ul class="pagination mb-0">
         {% if page_obj.has_previous %}
         <li class="page-item">
           <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
@@ -151,7 +335,6 @@
           </a>
         </li>
         {% endif %}
-
         {% for num in page_obj.paginator.page_range %}
         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
           <a class="page-link" href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
@@ -159,7 +342,6 @@
           </a>
         </li>
         {% endfor %}
-
         {% if page_obj.has_next %}
         <li class="page-item">
           <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
@@ -168,46 +350,42 @@
         </li>
         {% endif %}
       </ul>
-    </nav>
+    </div>
     {% endif %}
 
     {% else %}
-    <div class="text-center py-5 text-muted">
-      <div class="mb-3 opacity-50">{% bs_icon 'bag-x' size='3em' %}</div>
-      <p class="fw-bold">{% trans "No products found." %}</p>
-      <a href="{% url 'products:products' %}" class="btn btn-dark btn-sm rounded-pill px-4">
-        {% trans "Clear Filters" %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-bag-x"></i></div>
+      <h3>{% trans "No products found" %}</h3>
+      <p>{% trans "Try adjusting your filters or browse all products." %}</p>
+      <a href="{% url 'products:products' %}" class="clear-btn">
+        <i class="bi bi-arrow-counterclockwise"></i> {% trans "Clear Filters" %}
       </a>
     </div>
     {% endif %}
 
-  </div>{# /grid col #}
-</div>{# /row #}
+  </div>{# /grid-area #}
+</div>{# /store-layout #}
 
 
-
-{# ── Hover behaviour (Bootstrap-only, no CSS file) ── #}
 <script>
-  document.querySelectorAll('.product-card').forEach(card => {
-    const overlay = card.querySelector('.product-overlay');
-    const img     = card.querySelector('.product-img');
-    const wrap    = card.closest('a[data-product-link]');
-
-    card.addEventListener('mouseenter', () => {
-      if (overlay) overlay.style.transform = 'translateY(0)';
-      if (img)     img.style.transform     = 'scale(1.06)';
-    });
-    card.addEventListener('mouseleave', () => {
-      if (overlay) overlay.style.transform = 'translateY(100%)';
-      if (img)     img.style.transform     = 'scale(1)';
-    });
-
-    // Prevent the cart form / modal button inside overlay from triggering the link navigation
-    const overlayEl = card.querySelector('.product-overlay');
-    if (overlayEl) {
-      overlayEl.addEventListener('click', e => e.stopPropagation());
-    }
+document.querySelectorAll('.js-cart-form').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    const btn = this.querySelector('button');
+    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> {% trans "Added!" %}';
+    btn.style.background = 'var(--accent)';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
   });
+});
+
+document.querySelectorAll('.prod-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => e.stopPropagation());
+});
 </script>
 
 {% endblock %}

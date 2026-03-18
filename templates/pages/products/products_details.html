@@ -2,406 +2,592 @@
 {% load i18n %}
 {% load bootstrap_icons %}
 
+{% block title %}{{ product.name }} — SMART S3R{% endblock %}
+
 {% block content %}
-<div class="bg-light py-3 mb-5">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">{% trans "Home" %}</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'categories:categories' %}" class="text-decoration-none text-muted">{% trans "Store" %}</a></li>
-                <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url|default:'#' }}" class="text-decoration-none text-muted">{{ product.category.name }}</a></li>
-                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ product.name }}</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
-<div class="container mb-5">
-    <div class="row g-5">
-        <!-- Product Images -->
-        <div class="col-lg-6">
-            <div class="position-sticky product-detail-sticky">
-                <div class="card border-0 shadow-sm overflow-hidden rounded-4">
-                    {% if product.img %}
-                        <img src="{{ product.img.url }}" class="img-fluid w-100 product-img-cover" alt="{{ product.name }}">
-                    {% elif product.img_link %}
-                        <img src="{{ product.img_link }}" class="img-fluid w-100 product-img-cover" alt="{{ product.name }}">
-                    {% else %}
-                        <div class="bg-secondary d-flex align-items-center justify-content-center text-white product-placeholder">
-                            <i class="bi bi-image" style="font-size: 4rem;"></i>
-                        </div>
-                    {% endif %}
-                    
-                    {% if product.stock == 0 %}
-                    <div class="position-absolute top-0 end-0 m-3 px-3 py-1 bg-danger text-white rounded-pill fw-bold small out-of-stock-badge">
-                        {% trans "Out of Stock" %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="col-lg-6">
-            <div class="ps-lg-4">
-                <div class="mb-2">
-                    <span class="badge bg-dark-subtle text-dark-emphasis rounded-pill px-3 py-2 fw-bold text-uppercase product-brand-badge">
-                        {{ product.brand.name }}
-                    </span>
-                    {% if product.type %}
-                    <span class="ms-2 badge bg-secondary-subtle text-secondary-emphasis rounded-pill px-3 py-2 fw-bold text-uppercase product-brand-badge">
-                        {{ product.type }}
-                    </span>
-                    {% endif %}
-                </div>
-
-                <h1 class="display-5 fw-bold mb-2">{{ product.name }}</h1>
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <div class="text-warning">
-                        {% for i in "12345" %}
-                            <i class="bi {% if forloop.counter <= avg_rating %}bi-star-fill{% elif forloop.counter < avg_rating|add:1 %}bi-star-half{% else %}bi-star{% endif %}"></i>
-                        {% endfor %}
-                    </div>
-                    <span class="text-muted small">({{ avg_rating }} / 5) &bull; {{ review_count }} {% trans "Reviews" %}</span>
-                </div>
-                
-                <div class="d-flex align-items-center mb-2">
-                    <h3 class="fw-bold text-primary mb-0 me-3">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ product.price }}</h3>
-                    {% if original_price %}
-                    <span class="text-muted text-decoration-line-through h5 mb-0">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ original_price }}</span>
-                    {% endif %}
-                </div>
-
-                <div class="mb-4">
-                    {% if product.stock > 10 %}
-                        <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> {% trans "In Stock" %}</span>
-                    {% elif product.stock > 0 %}
-                        <span class="text-warning small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% blocktrans with count=product.stock %}Only {{ count }} left in stock!{% endblocktrans %}</span>
-                    {% else %}
-                        <span class="text-danger small fw-bold"><i class="bi bi-x-circle-fill me-1"></i> {% trans "Out of Stock" %}</span>
-                    {% endif %}
-                </div>
-
-                <div class="mb-4">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-2">{% trans "Description" %}</h6>
-                    <p class="text-secondary product-description">
-                        {{ product.description|truncatewords:40 }}
-                    </p>
-                </div>
-
-                <div class="row g-3 align-items-center mb-4">
-                    <div class="col-auto">
-                        {% if user.is_authenticated %}
-                        <form action="{% url 'cart:add' product.id %}" method="post" class="d-flex align-items-center mb-0 js-cart-form">
-                            {% csrf_token %}
-                            <div class="input-group border rounded-pill overflow-hidden quantity-input">
-                                <button class="btn btn-link text-dark text-decoration-none px-3 border-0" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input type="number" name="quantity" value="1" min="1" max="{{ product.stock|default:10 }}" 
-                                    class="form-control border-0 text-center fw-bold bg-white quantity-btn">
-                                <button class="btn btn-link text-dark text-decoration-none px-3 border-0" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <button type="submit" class="btn btn-dark rounded-pill ms-3 fw-bold d-flex align-items-center justify-content-center gap-2 px-4 btn-add-cart" 
-                                {% if product.stock == 0 %}disabled{% endif %}>
-                                <i class="bi bi-cart-plus"></i>
-                                {% trans "Add to Cart" %}
-                            </button>
-                        </form>
-                        {% else %}
-                        <div class="d-flex align-items-center">
-                            <div class="input-group border rounded-pill overflow-hidden quantity-input">
-                                <button class="btn btn-link text-dark text-decoration-none px-3 border-0" type="button">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <input type="number" value="1" readonly class="form-control border-0 text-center fw-bold bg-white quantity-btn">
-                                <button class="btn btn-link text-dark text-decoration-none px-3 border-0" type="button">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                            <button type="button" class="btn btn-dark rounded-pill ms-3 fw-bold d-flex align-items-center justify-content-center gap-2 px-4" 
-                                data-bs-toggle="modal" data-bs-target="#authModal">
-                                <i class="bi bi-cart-plus"></i>
-                                {% trans "Add to Cart" %}
-                            </button>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-auto">
-                        {% if user.is_authenticated %}
-                        <form action="{% url 'products:toggle_wishlist' product.id %}" method="post" class="js-wishlist-form">
-                            {% csrf_token %}
-                            <button type="submit" class="btn {% if is_in_wishlist %}btn-dark{% else %}btn-outline-dark{% endif %} rounded-circle d-flex align-items-center justify-content-center p-0 js-wishlist-btn btn-wishlist" title="{% trans 'Wishlist' %}">
-                                {% if is_in_wishlist %}
-                                    <i class="bi bi-heart-fill"></i>
-                                {% else %}
-                                    <i class="bi bi-heart"></i>
-                                {% endif %}
-                            </button>
-                        </form>
-                        {% else %}
-                        <button type="button" class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center p-0 btn-wishlist" 
-                            data-bs-toggle="modal" data-bs-target="#authModal" title="{% trans 'Wishlist' %}">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-
-                {% if product.external_link %}
-                <div class="mb-5">
-                    <a href="{{ product.external_link }}" target="_blank" class="btn btn-outline-primary rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-2 btn-add-cart-external">
-                        <i class="bi bi-box-arrow-up-right"></i>
-                        {% trans "Visit Official Site" %}
-                    </a>
-                </div>
-                {% endif %}
-
-                <div class="pt-4 border-top">
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2 d-flex">
-                            <span class="text-muted small fw-bold text-uppercase detail-label">{% trans "SKU:" %}</span>
-                            <span class="small fw-bold">{{ product.sku|default:"N/A" }}</span>
-                        </li>
-                        <li class="mb-2 d-flex">
-                            <span class="text-muted small fw-bold text-uppercase detail-label">{% trans "Category:" %}</span>
-                            <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none text-dark small fw-bold border-bottom">{{ product.category.name }}</a>
-                        </li>
-                        <li class="d-flex align-items-center">
-                            <span class="text-muted small fw-bold text-uppercase share-label">{% trans "Share:" %}</span>
-                            <div class="d-flex gap-3">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" class="text-muted hover-primary transition-all"><i class="bi bi-facebook"></i></a>
-                                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ product.name|urlencode }}" target="_blank" class="text-muted hover-primary transition-all"><i class="bi bi-twitter-x"></i></a>
-                                <a href="whatsapp://send?text={{ product.name|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" class="text-muted hover-primary transition-all"><i class="bi bi-whatsapp"></i></a>
-                                <button class="btn btn-link p-0 text-muted border-0 text-decoration-none hover-primary transition-all" onclick="copyToClipboard('{{ request.build_absolute_uri }}', this)" title="{% trans 'Copy Link' %}">
-                                    <i class="bi bi-link-45deg"></i>
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tabs Section -->
-    <div class="row mt-5 pt-5">
-        <div class="col-12">
-            <ul class="nav nav-tabs border-0 justify-content-center mb-4 gap-4 nav-tabs-custom" id="productTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active border-0 bg-transparent text-uppercase fw-bold p-0 pb-2"
-                        id="description-tab" data-bs-toggle="tab" data-bs-target="#description-pane" type="button" role="tab" 
-                        aria-controls="description-pane" aria-selected="true">{% trans "Description" %}</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link border-0 bg-transparent text-uppercase fw-bold p-0 pb-2"
-                        id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs-pane" type="button" role="tab" 
-                        aria-controls="specs-pane" aria-selected="false">{% trans "Specifications" %}</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link border-0 bg-transparent text-uppercase fw-bold p-0 pb-2"
-                        id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab" 
-                        aria-controls="reviews-pane" aria-selected="false">{% trans "Reviews" %} ({{ reviews|length }})</button>
-                </li>
-            </ul>
-            <div class="tab-content py-4" id="productTabsContent">
-                <div class="tab-pane fade show active" id="description-pane" role="tabpanel" aria-labelledby="description-tab" tabindex="0">
-                    <div class="mx-auto text-secondary product-description tab-content-max">
-                        {{ product.description|linebreaks }}
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="specs-pane" role="tabpanel" aria-labelledby="specs-tab" tabindex="0">
-                   <div class="tab-content-max mx-auto">
-                        <table class="table table-striped table-hover rounded overflow-hidden">
-                            <tbody>
-                                <tr>
-                                    <th class="py-3 px-4 border-start specs-table">{% trans "Brand" %}</th>
-                                    <td class="py-3 px-4">{{ product.brand.name }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="py-3 px-4 border-start">{% trans "Category" %}</th>
-                                    <td class="py-3 px-4">{{ product.category.name }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="py-3 px-4 border-start">{% trans "Type" %}</th>
-                                    <td class="py-3 px-4">{{ product.type|default:"N/A" }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="py-3 px-4 border-start">{% trans "Stock" %}</th>
-                                    <td class="py-3 px-4">{{ product.stock }} {% trans "Items available" %}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                   </div>
-                </div>
-                <div class="tab-pane fade" id="reviews-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
-                    <div class="tab-content-max mx-auto">
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <h5 class="fw-bold mb-0">{% trans "Customer Reviews" %}</h5>
-                            {% if user.is_authenticated %}
-                                <button class="btn btn-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#reviewModal">
-                                    {% if user_review %}{% trans "Edit Your Review" %}{% else %}{% trans "Write a Review" %}{% endif %}
-                                </button>
-                            {% else %}
-                                <button class="btn btn-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#authModal">
-                                    {% trans "Login to Review" %}
-                                </button>
-                            {% endif %}
-                        </div>
-
-                        {% if reviews %}
-                            <div class="reviews-list">
-                                {% for review in reviews %}
-                                    <div class="review-item py-4 {% if not forloop.last %}border-bottom{% endif %}">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="review-avatar me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                                {% if review.user.avatar %}
-                                                    <img src="{{ review.user.avatar.url }}" class="rounded-circle w-100 h-100" style="object-fit: cover;">
-                                                {% else %}
-                                                    <i class="bi bi-person text-muted"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div>
-                                                <h6 class="fw-bold mb-0">{{ review.user.user.get_full_name|default:review.user.user.username }}</h6>
-                                                <div class="text-primary small">
-                                                    {% for i in "12345" %}
-                                                        <i class="bi {% if forloop.counter <= review.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>
-                                                    {% endfor %}
-                                                    <span class="text-muted ms-2" style="font-size: 0.75rem;">{{ review.created_at|date:"M d, Y" }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <p class="text-secondary mb-0 mt-3">{{ review.comment }}</p>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="text-center py-5 text-muted">
-                                <div class="mb-3 opacity-50"><i class="bi bi-chat-left-text" style="font-size: 2.5rem;"></i></div>
-                                <p>{% trans "No reviews yet. Be the first to share your experience!" %}</p>
-                                {% if user.is_authenticated %}
-                                    <button class="btn btn-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#reviewModal">{% trans "Write a Review" %}</button>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Related Products -->
-    {% if related_products %}
-    <div class="row mt-5 pt-5 border-top">
-        <div class="col-12 mb-4">
-            <h6 class="text-muted text-uppercase small fw-bold mb-1">{% trans "You may also like" %}</h6>
-            <h2 class="fw-bold">{% trans "Related Products" %}</h2>
-        </div>
-        {% for rel in related_products %}
-        <div class="col-md-3 col-6 mb-4">
-            <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden product-card-hover hover-lift">
-                <a href="{{ rel.get_absolute_url|default:'#' }}" class="text-decoration-none">
-                    <div class="position-relative overflow-hidden product-image-wrapper">
-                        {% if rel.img %}
-                            <img src="{{ rel.img.url }}" class="img-fluid w-100 h-100 border-bottom" alt="{{ rel.name }}">
-                        {% elif rel.img_link %}
-                            <img src="{{ rel.img_link }}" class="img-fluid w-100 h-100 border-bottom" alt="{{ rel.name }}">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center h-100 text-muted">
-                                <i class="bi bi-image" style="font-size: 2rem;"></i>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="card-body p-3">
-                        <p class="text-muted small fw-bold text-uppercase mb-1 product-brand-text">{{ rel.brand.name }}</p>
-                        <h6 class="text-dark fw-bold mb-2 text-truncate product-name-text">{{ rel.name }}</h6>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-primary fw-bold">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ rel.price }}</span>
-                            {% if user.is_authenticated %}
-                            <form action="{% url 'cart:add' rel.id %}" method="post" class="js-cart-form">
-                                {% csrf_token %}
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-dark btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                    <i class="bi bi-cart-plus" style="font-size: 1rem;"></i>
-                                </button>
-                            </form>
-                            {% else %}
-                            <button type="button" class="btn btn-dark btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" 
-                                style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#authModal">
-                                <i class="bi bi-cart-plus" style="font-size: 1rem;"></i>
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-</div>
 
 <style>
-    .star-rating {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-        gap: 0.5rem;
-    }
-    .star-rating input { display: none; }
-    .star-rating label {
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #dee2e6;
-        transition: color 0.2s;
-    }
-    .star-rating label:hover,
-    .star-rating label:hover ~ label,
-    .star-rating input:checked ~ label {
-        color: #ffc107;
-    }
-    .star-rating label:hover ~ label {
-        color: #ffc107;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --accent:      #10b981;
+  --accent-mid:  rgba(16,185,129,0.12);
+  --accent-dim:  rgba(16,185,129,0.07);
+  --bg:          #f8fafc;
+  --white:       #ffffff;
+  --text-1:      #0f172a;
+  --text-2:      #475569;
+  --text-3:      #94a3b8;
+  --border:      #e2e8f0;
+  --border-2:    #cbd5e1;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --font-head:   'Sora', sans-serif;
+  --font-body:   'DM Sans', sans-serif;
+}
+body { font-family: var(--font-body); background: var(--bg); }
+
+/* ── Breadcrumb ────────────────────────────── */
+.breadcrumb { font-size: 0.8rem; margin-bottom: 1.8rem; }
+.breadcrumb-item a { color: var(--text-3); text-decoration: none; }
+.breadcrumb-item a:hover { color: var(--accent); }
+.breadcrumb-item.active { color: var(--text-2); font-weight: 500; }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--text-3); }
+
+/* ── Image Panel ───────────────────────────── */
+.img-panel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+.img-panel img {
+  width: 100%; min-height: 480px;
+  object-fit: contain; display: block;
+  padding: 24px;
+}
+.img-placeholder {
+  min-height: 480px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-3); font-size: 5rem;
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+}
+.stock-badge-img {
+  position: absolute; top: 16px; right: 16px;
+  background: #ef4444; color: #fff;
+  font-family: var(--font-head); font-size: 0.72rem; font-weight: 700;
+  padding: 5px 14px; border-radius: 100px; letter-spacing: 0.05em;
+}
+
+/* ── Info Panel ────────────────────────────── */
+.info-panel { padding-left: 1.5rem; }
+@media (max-width: 991px) { .info-panel { padding-left: 0; margin-top: 1.5rem; } }
+
+/* Badges row */
+.badge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.badge-brand {
+  font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+  background: var(--text-1); color: #fff;
+  padding: 5px 14px; border-radius: 100px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.badge-type {
+  font-family: var(--font-head); font-size: 0.7rem; font-weight: 700;
+  background: var(--bg); color: var(--text-2); border: 1.5px solid var(--border);
+  padding: 4px 13px; border-radius: 100px; text-transform: uppercase;
+}
+
+/* Product title */
+.prod-title {
+  font-family: var(--font-head);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800; color: var(--text-1);
+  letter-spacing: -0.02em; line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+/* Rating row */
+.rating-row {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 1.2rem; border-bottom: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+.stars { color: #f59e0b; font-size: 0.95rem; }
+.rating-text { font-size: 0.82rem; color: var(--text-3); }
+
+/* Price */
+.price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1.4rem; }
+.price-main {
+  font-family: var(--font-head); font-size: 1.9rem; font-weight: 800; color: var(--text-1);
+}
+.price-currency { font-size: 1rem; font-weight: 600; color: var(--text-2); margin-right: 3px; }
+.price-old { font-size: 1rem; color: var(--text-3); text-decoration: line-through; }
+.price-save {
+  font-family: var(--font-head); font-size: 0.72rem; font-weight: 700;
+  background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;
+  padding: 3px 10px; border-radius: 100px;
+}
+
+/* Stock status */
+.stock-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-family: var(--font-head); font-size: 0.82rem; font-weight: 700;
+  margin-bottom: 1.4rem; width: 100%;
+}
+.stock-ok    { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.stock-low   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.stock-none  { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+/* Perks */
+.perks-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.6rem; }
+.perk-box {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 14px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); text-align: center;
+  transition: border-color 0.2s;
+}
+.perk-box:hover { border-color: var(--accent); }
+.perk-icon { font-size: 1.4rem; color: var(--text-2); }
+.perk-label { font-family: var(--font-head); font-size: 0.75rem; font-weight: 700; color: var(--text-1); }
+
+/* Quantity + Add to Cart */
+.cart-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem; }
+
+.qty-shell {
+  display: flex; align-items: center;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); overflow: hidden;
+  flex-shrink: 0;
+}
+.qty-btn {
+  background: none; border: none; color: var(--text-2);
+  width: 38px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; transition: all 0.18s;
+}
+.qty-btn:hover { background: var(--bg); color: var(--text-1); }
+.qty-input {
+  width: 44px; border: none; outline: none; text-align: center;
+  font-family: var(--font-head); font-size: 0.9rem; font-weight: 700;
+  color: var(--text-1); background: transparent;
+}
+
+.add-cart-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px;
+  background: var(--text-1); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 13px 20px;
+  font-family: var(--font-head); font-size: 0.92rem; font-weight: 700;
+  cursor: pointer; transition: all 0.22s;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.15);
+}
+.add-cart-btn:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.2); }
+.add-cart-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.wishlist-btn {
+  width: 52px; height: 52px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+  flex-shrink: 0; border: 1.5px solid var(--border); background: var(--white); color: var(--text-2);
+}
+.wishlist-btn.active { background: #fef2f2; border-color: #fecaca; color: #ef4444; }
+.wishlist-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* External link */
+.ext-link {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-head); font-size: 0.85rem; font-weight: 600;
+  color: var(--text-1); text-decoration: none; transition: all 0.2s;
+  margin-bottom: 1.4rem;
+}
+.ext-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Meta rows */
+.meta-table { border-top: 1px solid var(--border); padding-top: 1.2rem; }
+.meta-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.meta-key { font-size: 0.72rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.07em; width: 80px; flex-shrink: 0; }
+.meta-val { font-size: 0.85rem; color: var(--text-1); font-weight: 500; }
+.meta-val a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.meta-val a:hover { text-decoration: underline; }
+
+.share-icons { display: flex; gap: 10px; }
+.share-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2); font-size: 0.85rem; text-decoration: none;
+  transition: all 0.18s;
+}
+.share-icon:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── Tabs ──────────────────────────────────── */
+.tabs-section { margin-top: 4rem; }
+
+.tab-pills {
+  display: inline-flex; background: var(--white);
+  border: 1.5px solid var(--border); border-radius: 100px;
+  padding: 4px; gap: 4px; margin-bottom: 2.4rem;
+}
+.tab-pill {
+  font-family: var(--font-head); font-size: 0.78rem; font-weight: 700;
+  color: var(--text-2); background: transparent; border: none;
+  border-radius: 100px; padding: 9px 22px; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.tab-pill.active { background: var(--text-1); color: #fff; }
+.tab-pill:not(.active):hover { background: var(--bg); color: var(--text-1); }
+
+.tab-pane-content { display: none; }
+.tab-pane-content.active { display: block; }
+
+/* Description */
+.description-body { font-size: 0.95rem; color: var(--text-2); line-height: 1.85; }
+
+/* Specs table */
+.specs-table {
+  width: 100%; border-radius: var(--radius-md);
+  overflow: hidden; border: 1px solid var(--border);
+}
+.specs-table th {
+  background: var(--bg); padding: 13px 20px;
+  font-size: 0.75rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  width: 30%; border-bottom: 1px solid var(--border);
+}
+.specs-table td {
+  padding: 13px 20px; font-size: 0.88rem; color: var(--text-1);
+  font-weight: 500; border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+.specs-table tr:last-child th,
+.specs-table tr:last-child td { border-bottom: none; }
+
+/* Reviews */
+.reviews-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.8rem; flex-wrap: wrap; gap: 12px;
+}
+.reviews-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 800; color: var(--text-1); }
+.write-review-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--text-1); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 10px 20px;
+  font-family: var(--font-head); font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.write-review-btn:hover { background: #1e293b; }
+
+.review-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 20px 22px;
+  margin-bottom: 14px; transition: border-color 0.2s;
+}
+.review-card:hover { border-color: var(--border-2); }
+
+.review-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--accent-mid); border: 1px solid rgba(16,185,129,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--accent);
+  flex-shrink: 0;
+}
+.review-name { font-family: var(--font-head); font-size: 0.88rem; font-weight: 700; color: var(--text-1); }
+.review-date { font-size: 0.75rem; color: var(--text-3); }
+.review-stars { color: #f59e0b; font-size: 0.85rem; }
+.review-comment { font-size: 0.88rem; color: var(--text-2); line-height: 1.7; margin: 12px 0 0; font-style: italic; }
+
+.reviews-empty {
+  text-align: center; padding: 60px 20px;
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.reviews-empty-icon {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; color: var(--accent); margin: 0 auto 1rem;
+}
 </style>
 
-{% if user.is_authenticated %}
-<!-- Review Modal -->
-<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold mb-0" id="reviewModalLabel">{% if user_review %}{% trans "Edit Your Review" %}{% else %}{% trans "Write a Review" %}{% endif %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body pt-3">
-                <form action="{% url 'products:add_review' product.id %}" method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-uppercase">{% trans "Rating" %}</label>
-                        <div class="star-rating">
-                            {% for i in "54321" %}
-                                <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if user_review.rating|stringformat:"i" == i %}checked{% endif %} required>
-                                <label for="star{{ i }}" title="{{ i }} stars"><i class="bi bi-star-fill"></i></label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label for="id_comment" class="form-label small fw-bold text-uppercase">{% trans "Your Comment" %}</label>
-                        {{ review_form.comment }}
-                        {% if user_review %}
-                            <script>document.getElementById('id_comment').value = `{{ user_review.comment|escapejs }}`;</script>
-                        {% endif %}
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold py-2">
-                        {% if user_review %}{% trans "Update Review" %}{% else %}{% trans "Submit Review" %}{% endif %}
-                    </button>
-                </form>
-            </div>
-        </div>
+
+{# ── Breadcrumb ──────────────────────────────── #}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house me-1"></i>{% trans "Home" %}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'categories:categories' %}">{% trans "Store" %}</a></li>
+    {% if product.category %}
+    <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+    {% endif %}
+    <li class="breadcrumb-item active">{{ product.name }}</li>
+  </ol>
+</nav>
+
+
+{# ── Product Layout ──────────────────────────── #}
+<div class="row g-4 mb-5">
+
+  {# Image #}
+  <div class="col-lg-6">
+    <div class="img-panel position-sticky" style="top:80px;">
+      {% if product.img %}
+        <img src="{{ product.img.url }}" alt="{{ product.name }}">
+      {% elif product.img_link %}
+        <img src="{{ product.img_link }}" alt="{{ product.name }}">
+      {% else %}
+        <div class="img-placeholder"><i class="bi bi-phone"></i></div>
+      {% endif %}
+      {% if product.stock == 0 %}
+        <span class="stock-badge-img">{% trans "Out of Stock" %}</span>
+      {% endif %}
     </div>
+  </div>
+
+  {# Info #}
+  <div class="col-lg-6">
+    <div class="info-panel">
+
+      {# Badges #}
+      <div class="badge-row">
+        <span class="badge-brand">{{ product.brand.name }}</span>
+        {% if product.type %}
+          <span class="badge-type">{{ product.type }}</span>
+        {% endif %}
+      </div>
+
+      {# Title #}
+      <h1 class="prod-title">{{ product.name }}</h1>
+
+      {# Rating #}
+      <div class="rating-row">
+        <div class="stars">
+          {% for i in "12345" %}
+            <i class="bi {% if forloop.counter <= avg_rating %}bi-star-fill{% elif forloop.counter < avg_rating|add:1 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+          {% endfor %}
+        </div>
+        <span class="rating-text">{{ avg_rating }}/5 &bull; {{ review_count }} {% trans "reviews" %}</span>
+      </div>
+
+      {# Price #}
+      <div class="price-row">
+        <div class="price-main">
+          <span class="price-currency">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span>{{ product.price }}
+        </div>
+        {% if original_price %}
+          <span class="price-old">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ original_price }}</span>
+          <span class="price-save">{% trans "SALE" %}</span>
+        {% endif %}
+      </div>
+
+      {# Stock #}
+      {% if product.stock > 10 %}
+        <div class="stock-pill stock-ok">
+          <i class="bi bi-shield-check"></i> {% trans "In stock — ready to ship" %}
+        </div>
+      {% elif product.stock > 0 %}
+        <div class="stock-pill stock-low">
+          <i class="bi bi-clock-history"></i>
+          {% blocktrans with count=product.stock %}Only {{ count }} left — order soon!{% endblocktrans %}
+        </div>
+      {% else %}
+        <div class="stock-pill stock-none">
+          <i class="bi bi-x-octagon"></i> {% trans "Currently out of stock" %}
+        </div>
+      {% endif %}
+
+      {# Perks #}
+      <div class="perks-row">
+        <div class="perk-box">
+          <span class="perk-icon"><i class="bi bi-truck"></i></span>
+          <span class="perk-label">{% trans "Free Delivery" %}</span>
+        </div>
+        <div class="perk-box">
+          <span class="perk-icon"><i class="bi bi-arrow-return-left"></i></span>
+          <span class="perk-label">{% trans "30-Day Returns" %}</span>
+        </div>
+        <div class="perk-box">
+          <span class="perk-icon"><i class="bi bi-shield-lock"></i></span>
+          <span class="perk-label">{% trans "Secure Payment" %}</span>
+        </div>
+        <div class="perk-box">
+          <span class="perk-icon"><i class="bi bi-headset"></i></span>
+          <span class="perk-label">{% trans "24/7 Support" %}</span>
+        </div>
+      </div>
+
+      {# Cart #}
+      <div class="cart-row">
+        {% if user.is_authenticated %}
+          <form action="{% url 'cart:add' product.id %}" method="post"
+                class="js-cart-form d-flex align-items-center gap-2 flex-grow-1">
+            {% csrf_token %}
+            <div class="qty-shell">
+              <button class="qty-btn" type="button"
+                      onclick="var i=this.parentNode.querySelector('input');if(i.value>1)i.value=+i.value-1">
+                <i class="bi bi-dash-lg"></i>
+              </button>
+              <input class="qty-input" type="number" name="quantity"
+                     value="1" min="1" max="{{ product.stock|default:10 }}">
+              <button class="qty-btn" type="button"
+                      onclick="var i=this.parentNode.querySelector('input');if(+i.value<+i.max)i.value=+i.value+1">
+                <i class="bi bi-plus-lg"></i>
+              </button>
+            </div>
+            <button type="submit" class="add-cart-btn" {% if product.stock == 0 %}disabled{% endif %}>
+              <i class="bi bi-bag-plus"></i> {% trans "Add to Cart" %}
+            </button>
+          </form>
+        {% else %}
+          <button type="button" class="add-cart-btn flex-grow-1"
+                  data-bs-toggle="modal" data-bs-target="#authModal">
+            <i class="bi bi-bag-plus"></i> {% trans "Add to Cart" %}
+          </button>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+          <form action="{% url 'products:toggle_wishlist' product.id %}" method="post" class="mb-0">
+            {% csrf_token %}
+            <button type="submit" class="wishlist-btn {% if is_in_wishlist %}active{% endif %}">
+              <i class="bi {% if is_in_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+            </button>
+          </form>
+        {% endif %}
+      </div>
+
+      {# External link #}
+      {% if product.external_link %}
+        <a href="{{ product.external_link }}" target="_blank" class="ext-link">
+          <i class="bi bi-box-arrow-up-right"></i>
+          {% trans "Visit Official Manufacturer Website" %}
+        </a>
+      {% endif %}
+
+      {# Meta #}
+      <div class="meta-table">
+        <div class="meta-row">
+          <span class="meta-key">{% trans "SKU" %}</span>
+          <span class="meta-val">{{ product.sku|default:"N/A" }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">{% trans "Category" %}</span>
+          <span class="meta-val">
+            <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+          </span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">{% trans "Share" %}</span>
+          <div class="share-icons">
+            <a href="#" class="share-icon"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="share-icon"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="share-icon"><i class="bi bi-whatsapp"></i></a>
+            <a href="#" class="share-icon"><i class="bi bi-link-45deg"></i></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
-{% endif %}
+
+
+{# ── Tabs ────────────────────────────────────── #}
+<div class="tabs-section">
+  <div class="text-center">
+    <div class="tab-pills" role="tablist">
+      <button class="tab-pill active" onclick="switchTab('description', this)">{% trans "Description" %}</button>
+      <button class="tab-pill" onclick="switchTab('specs', this)">{% trans "Specifications" %}</button>
+      <button class="tab-pill" onclick="switchTab('reviews', this)">{% trans "Reviews" %} ({{ reviews|length }})</button>
+    </div>
+  </div>
+
+  {# Description #}
+  <div id="tab-description" class="tab-pane-content active">
+    <div class="description-body">{{ product.description|linebreaks }}</div>
+  </div>
+
+  {# Specs #}
+  <div id="tab-specs" class="tab-pane-content">
+    <table class="specs-table">
+      <tbody>
+        <tr>
+          <th>{% trans "Brand" %}</th>
+          <td>{{ product.brand.name }}</td>
+        </tr>
+        <tr>
+          <th>{% trans "Category" %}</th>
+          <td>{{ product.category.name }}</td>
+        </tr>
+        <tr>
+          <th>{% trans "Condition" %}</th>
+          <td>{% trans "New / Original Box" %}</td>
+        </tr>
+        <tr>
+          <th>{% trans "Availability" %}</th>
+          <td>
+            {% if product.stock > 0 %}
+              <span style="color:#15803d;font-weight:600;">{% trans "In Stock" %}</span>
+            {% else %}
+              <span style="color:#b91c1c;font-weight:600;">{% trans "Out of Stock" %}</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{% trans "Shipping" %}</th>
+          <td>{% trans "International Shipping Available" %}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {# Reviews #}
+  <div id="tab-reviews" class="tab-pane-content">
+    <div class="reviews-header">
+      <h3 class="reviews-title">{% trans "Verified Reviews" %}</h3>
+      <button class="write-review-btn"
+              data-bs-toggle="modal"
+              data-bs-target="{% if user.is_authenticated %}#reviewModal{% else %}#authModal{% endif %}">
+        <i class="bi bi-pencil-square"></i> {% trans "Write a Review" %}
+      </button>
+    </div>
+
+    {% if reviews %}
+      {% for review in reviews %}
+      <div class="review-card">
+        <div class="d-flex align-items-start justify-content-between gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="review-avatar">{{ review.user.user.username|first|upper }}</div>
+            <div>
+              <div class="review-name">{{ review.user.user.get_full_name|default:review.user.user.username }}</div>
+              <div class="review-date">{{ review.created_at|date:"M d, Y" }}</div>
+            </div>
+          </div>
+          <div class="review-stars">
+            {% for i in "12345" %}
+              <i class="bi {% if forloop.counter <= review.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+            {% endfor %}
+          </div>
+        </div>
+        <p class="review-comment">"{{ review.comment }}"</p>
+      </div>
+      {% endfor %}
+
+    {% else %}
+      <div class="reviews-empty">
+        <div class="reviews-empty-icon"><i class="bi bi-chat-dots"></i></div>
+        <h5 style="font-family:var(--font-head);font-weight:700;color:var(--text-1);margin-bottom:0.4rem;">
+          {% trans "No reviews yet" %}
+        </h5>
+        <p style="font-size:0.88rem;color:var(--text-2);">
+          {% trans "Be the first to share your experience!" %}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+document.querySelectorAll('.js-cart-form').forEach(form => {
+  form.addEventListener('submit', function() {
+    const btn = this.querySelector('.add-cart-btn');
+    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> {% trans "Added!" %}';
+    btn.style.background = 'var(--accent)';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="bi bi-bag-plus"></i> {% trans "Add to Cart" %}';
+      btn.style.background = '';
+    }, 2000);
+  });
+});
+</script>
+
 {% endblock %}

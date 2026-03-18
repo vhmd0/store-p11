@@ -2,279 +2,332 @@
 {% load bootstrap_icons %}
 {% load i18n %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-2 sticky-top shadow-sm">
-  <div class="container">
-
-    <a class="navbar-brand fw-bold m-0" href="{% url 'home' %}">
-      SMART S3R.
+<nav class="navbar navbar-expand-lg sticky-top s3r-nav">
+  <div class="container-fluid px-lg-5">
+    
+    <a class="navbar-brand fw-black tracking-tighter" href="{% url 'home' %}">
+      <span class="brand-box">S</span>MART<span class="text-accent">S3R</span>
     </a>
 
+    <!-- Mobile Top Icons -->
     <div class="d-flex d-lg-none align-items-center gap-2">
-      <button class="btn btn-link text-dark p-0 text-decoration-none" type="button" data-bs-toggle="collapse"
-        data-bs-target="#mobileSearch" aria-label="Toggle search">
-        <i class="bi bi-search icon-lg"></i>
-      </button>
-      {% if user.is_authenticated %}
-      <a href="#cartOffcanvas" data-bs-toggle="offcanvas" aria-controls="cartOffcanvas"
-        class="btn btn-link text-dark p-0 text-decoration-none position-relative">
-        <i class="bi bi-cart icon-lg"></i>
-        {% if cart_count > 0 %}
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
-          {% if cart_count < 10 %}{{ cart_count }}{% else %}9+{% endif %} </span>
-            {% endif %}
-      </a>
-      {% endif %}
-
-      <button class="navbar-toggler border-0 p-0 ms-1 shadow-none" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="bi bi-list mobile-nav-btn"></i>
-      </button>
-
-      {% if not user.is_authenticated %}
-      <a href="{% url 'register' %}" class="btn btn-dark btn-sm rounded-pill px-2 fw-bold text-uppercase btn-join-us">{% trans "Join Us" %}</a>
-      {% endif %}
+        {% if user.is_authenticated %}
+            <div class="dropdown">
+                <a href="#" class="nav-user-trigger" data-bs-toggle="dropdown">
+                    <div class="avatar-hex" style="width: 32px; height: 32px; border-radius: 8px;">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="User">
+                        {% else %}
+                            <div class="avatar-init" style="font-size: 0.8rem;">{{ user.username|first|upper }}</div>
+                        {% endif %}
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-xl dark-dropdown mt-2 rounded-4 p-2">
+                    <li><a class="dropdown-item rounded-3 py-2 text-white" href="{% url 'profile' %}">{% trans "Profile" %}</a></li>
+                    <li><a class="dropdown-item rounded-3 py-2 text-white" href="{% url 'orders:order_list' %}">{% trans "My Orders" %}</a></li>
+                    <li><hr class="dropdown-divider opacity-25"></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button class="dropdown-item rounded-3 py-2 text-danger fw-bold">{% trans "Logout" %}</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn-nav-outline text-uppercase" style="font-size: 0.6rem; padding: 5px 12px;">{% trans "Login" %}</a>
+        {% endif %}
+        
+        <button class="navbar-toggler border-0 shadow-none text-white p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="bi bi-list fs-1"></i>
+        </button>
     </div>
 
-    <div class="d-none d-lg-block flex-grow-1 mx-4 position-relative js-search-wrapper search-wrapper">
-      <form action="{% url 'search' %}" method="get" autocomplete="off">
-        <div class="input-group bg-white border shadow-sm rounded-0 position-relative" style="height: 44px; overflow: visible;">
-          <span class="input-group-text bg-white border-0 px-3">
-            <i class="bi bi-search" style="font-size: 1.1rem;"></i>
-          </span>
-          <input type="text" name="q" class="form-control border-0 px-2 js-search-input search-input"
-            placeholder='{% trans "Search for products..." %}'>
-          
-          <!-- Clear button: absolute with hover effect -->
-          <button type="button" class="btn btn-link text-muted border-0 p-0 d-none js-search-clear shadow-none position-absolute d-flex align-items-center justify-content-center search-clear">
-            <i class="bi bi-x" style="font-size: 1.4rem;"></i>
-          </button>
+    <!-- Desktop Menu -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto gap-lg-3 mt-3 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link-cyber" href="{% url 'products:products' %}">
+            <span class="nav-num">01</span> {% trans "Shop" %}
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link-cyber dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <span class="nav-num">02</span> {% trans "Categories" %}
+          </a>
+          <ul class="dropdown-menu border-0 shadow-xl dark-dropdown animate slideIn mt-lg-2">
+            {% for cat in menu_categories %}
+              <li><a class="dropdown-item py-2 fw-semibold text-white" href="{% url 'products:products' %}?category={{ cat.slug }}">{{ cat.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link-cyber" href="{% url 'about' %}">
+            <span class="nav-num">03</span> {% trans "About Us" %}
+          </a>
+        </li>
+      </ul>
 
-          <button class="btn btn-dark px-4 rounded-0 d-flex align-items-center justify-content-center search-btn" type="submit">
-            <i class="bi bi-arrow-right" style="font-size: 1.1rem;"></i>
-          </button>
+      <!-- Desktop Right Side -->
+      <div class="d-none d-lg-flex align-items-center gap-4">
+        <div class="position-relative">
+          <form action="{% url 'search' %}" class="position-relative">
+            <input type="text" name="q" class="nav-search-v2" placeholder="{% trans 'Search for products...' %}">
+            <span class="search-key">/</span>
+          </form>
+        </div>
 
-          <div class="dropdown-menu w-100 border-0 shadow-lg mt-2 rounded-3 js-search-dropdown search-dropdown">
-            <div class="js-search-results"></div>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-center text-muted py-2 js-search-all" href="#">
-              {% trans "View all results" %}
+        {% if user.is_authenticated %}
+          <div class="d-flex gap-3 text-white-50">
+            <a href="{% url 'wishlist' %}" class="icon-btn-tech">
+              <i class="bi bi-heart fs-5"></i>
+              {% if wishlist_count > 0 %}<span class="badge-dot"></span>{% endif %}
+            </a>
+            <a href="#cartOffcanvas" data-bs-toggle="offcanvas" class="icon-btn-tech">
+              <i class="bi bi-terminal-plus fs-5"></i>
+              {% if cart_count > 0 %}<span class="badge-dot"></span>{% endif %}
             </a>
           </div>
-        </div>
-      </form>
-    </div>
 
-    <div class="d-none d-lg-none align-items-center gap-2">
-      <!-- Hidden this redundant block as we'll handle icons in the mobile-menu and desktop-menu -->
-    </div>
-
-    <div class="collapse d-lg-none w-100 mt-2" id="mobileSearch">
-      <div class="js-search-wrapper mobile-search-wrapper">
-        <form action="{% url 'search' %}" method="get" autocomplete="off">
-          <div class="input-group bg-white border shadow-sm rounded-0 position-relative mobile-search-input" style="overflow: visible;">
-            <span class="input-group-text bg-white border-0 px-3">
-              <i class="bi bi-search" style="font-size: 1.1rem;"></i>
-            </span>
-            <input type="text" name="q" class="form-control border-0 px-2 js-search-input search-input"
-              placeholder='{% trans "Search for products..." %}'>
-            
-            <button type="button" class="btn btn-link text-muted border-0 p-0 d-none js-search-clear shadow-none position-absolute d-flex align-items-center justify-content-center search-clear">
-              <i class="bi bi-x" style="font-size: 1.3rem;"></i>
-            </button>
-
-            <button class="btn btn-dark px-3 rounded-0 d-flex align-items-center justify-content-center search-btn" type="submit">
-              <i class="bi bi-arrow-right" style="font-size: 1.1rem;"></i>
-            </button>
-          <div class="dropdown-menu w-100 border-0 shadow-lg mt-2 rounded-3 js-search-dropdown search-dropdown" style="display: none;">
-              <div class="js-search-results"></div>
-            </div>
+          <div class="dropdown">
+            <a href="#" class="nav-user-trigger" data-bs-toggle="dropdown">
+              <div class="avatar-hex">
+                {% if user.profile.avatar %}
+                  <img src="{{ user.profile.avatar.url }}" alt="User">
+                {% else %}
+                  <div class="avatar-init">{{ user.username|first|upper }}</div>
+                {% endif %}
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-xl dark-dropdown mt-3 rounded-4 p-2">
+              <li class="px-3 py-2 border-bottom border-secondary mb-2 text-white-50 small">
+                <i class="bi bi-shield-check text-accent me-1"></i> {{ user.username }}
+              </li>
+              <li><a class="dropdown-item rounded-3 py-2 text-white" href="{% url 'profile' %}">{% trans "Profile" %}</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 text-white" href="{% url 'orders:order_list' %}">{% trans "My Orders" %}</a></li>
+              <li><hr class="dropdown-divider opacity-25"></li>
+              <li>
+                <form action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <button class="dropdown-item rounded-3 py-2 text-danger fw-bold">{% trans "Logout" %}</button>
+                </form>
+              </li>
+            </ul>
           </div>
-        </form>
-      </div>
-    </div>
-
-  <div class="d-none d-lg-flex align-items-center gap-4">
-    <div class="d-flex align-items-center gap-3">
-      <a class="text-decoration-none text-dark fw-bold text-uppercase nav-link-uppercase" href="{% url 'products:products' %}">{% trans "Shop" %}</a>
-      <a class="text-decoration-none text-dark fw-bold text-uppercase nav-link-uppercase" href="{% url 'about' %}">{% trans "About Us" %}</a>
-      <div class="dropdown">
-        <a class="text-decoration-none text-dark fw-bold text-uppercase dropdown-toggle nav-link-uppercase" href="#" role="button" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          {% trans "Categories" %}
-        </a>
-        <ul class="dropdown-menu shadow-sm border-0">
-          {% for cat in menu_categories %}
-          <li><a class="dropdown-item fw-bold"
-              href="{% url 'products:products' %}?category={{ cat.slug }}"
-              style="font-size: 0.8rem;">{{ cat.name }}</a></li>
-          {% endfor %}
-          {% if has_more_categories %}
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-            <li><a class="dropdown-item fw-bold text-muted" href="{% url 'products:products' %}" style="font-size: 0.8rem;">{% trans "All Categories" %}</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="d-flex align-items-center gap-3 border-start ps-4">
-      <div class="dropdown">
-        <a class="text-decoration-none text-dark fw-bold text-uppercase dropdown-toggle btn-language" style="font-size: 0.7rem;"
-          href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          {% if request.LANGUAGE_CODE == 'ar' %}AR{% else %}EN{% endif %}
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 lang-dropdown">
-          <li>
-            <form action="{% url 'set_language' %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <input name="next" type="hidden" value="/">
-              <input name="language" type="hidden" value="en">
-              <button type="submit"
-                class="dropdown-item fw-bold text-center {% if request.LANGUAGE_CODE != 'ar' %}active{% endif %}"
-                style="font-size: 0.8rem;">EN</button>
-            </form>
-          </li>
-          <li>
-            <form action="{% url 'set_language' %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <input name="next" type="hidden" value="/">
-              <input name="language" type="hidden" value="ar">
-              <button type="submit"
-                class="dropdown-item fw-bold text-center {% if request.LANGUAGE_CODE == 'ar' %}active{% endif %}"
-                style="font-size: 0.8rem;">AR</button>
-            </form>
-          </li>
-        </ul>
-      </div>
-
-      <div class="d-flex align-items-center gap-3">
-        {% if user.is_authenticated %}
-        <a href="{% url 'wishlist' %}" class="text-dark position-relative text-decoration-none p-1">
-          <i class="bi bi-heart icon-xxl"></i>
-          {% if wishlist_count > 0 %}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger wishlist-badge">
-            {% if wishlist_count < 10 %}{{ wishlist_count }}{% else %}9+{% endif %} </span>
-              {% endif %}
-        </a>
-
-        <a href="#cartOffcanvas" data-bs-toggle="offcanvas" aria-controls="cartOffcanvas"
-          class="text-dark position-relative text-decoration-none p-1">
-          <i class="bi bi-cart icon-xxl"></i>
-          {% if cart_count > 0 %}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger wishlist-badge">
-            {% if cart_count < 10 %}{{ cart_count }}{% else %}9+{% endif %} </span>
-              {% endif %}
-        </a>
-
-        <a href="{% url 'profile' %}" class="text-dark text-decoration-none p-1">
-          <i class="bi bi-person icon-xl"></i>
-        </a>
+        {% else %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'login' %}" class="btn-nav-outline">{% trans "Login" %}</a>
+            <a href="{% url 'register' %}" class="btn-nav-primary">{% trans "Register" %}</a>
+          </div>
         {% endif %}
       </div>
-
-      {% if user.is_authenticated %}
-      <form action="{% url 'logout' %}" method="post" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-dark rounded-pill px-4 py-1 fw-bold text-uppercase ms-2 btn-logout">{% trans "Logout" %}</button>
-      </form>
-      {% else %}
-      <a href="{% url 'login' %}" class="btn btn-outline-dark rounded-pill px-3 py-1 fw-bold text-uppercase btn-login">{% trans "Login" %}</a>
-      <a href="{% url 'register' %}" class="btn btn-dark rounded-pill px-3 py-1 fw-bold text-uppercase ms-2 btn-register-nav">{% trans "Join Us" %}</a>
-      {% endif %}
     </div>
   </div>
 
-  <div class="collapse navbar-collapse mt-3" id="navbarNav">
-
-    <ul class="navbar-nav gap-2 mb-3 d-lg-none">
-      <li class="nav-item">
-        <a class="nav-link fw-bold text-uppercase" href="{% url 'products:products' %}">{% trans "Shop" %}</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link fw-bold text-uppercase" href="{% url 'about' %}">{% trans "About Us" %}</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link fw-bold text-uppercase dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          {% trans "Categories" %}
-        </a>
-        <ul class="dropdown-menu border-0 shadow-sm">
-          {% for cat in menu_categories %}
-          <li><a class="dropdown-item fw-bold"
-              href="{% url 'products:products' %}?category={{ cat.slug }}">{{ cat.name }}</a></li>
-          {% endfor %}
-          {% if has_more_categories %}
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li><a class="dropdown-item fw-bold text-muted" href="{% url 'products:products' %}">{% trans "All Categories" %}</a></li>
-          {% endif %}
-        </ul>
-      </li>
-    </ul>
-
-    <hr class="d-lg-none">
-
-    <div class="d-lg-none d-flex flex-column gap-3">
-      <div class="d-flex align-items-center justify-content-between">
-        <span class="text-muted small text-uppercase fw-bold">{% trans "Language" %}</span>
-        <div class="d-flex gap-2">
-          <form action="{% url 'set_language' %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="/">
-            <input name="language" type="hidden" value="en">
-            <button type="submit"
-              class="btn btn-outline-secondary btn-sm rounded-0 {% if request.LANGUAGE_CODE != 'ar' %}active{% endif %}">English</button>
-          </form>
-          <form action="{% url 'set_language' %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="/">
-            <input name="language" type="hidden" value="ar">
-            <button type="submit"
-              class="btn btn-outline-secondary btn-sm rounded-0 {% if request.LANGUAGE_CODE == 'ar' %}active{% endif %}">العربية</button>
-          </form>
+  <!-- Bottom Nav for Mobile -->
+  <div class="bottom-nav d-lg-none">
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col text-center">
+                <a href="{% url 'home' %}" class="nav-item-bottom {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <i class="bi bi-house-door"></i>
+                    <span>{% trans "Home" %}</span>
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="{% url 'products:products' %}" class="nav-item-bottom {% if 'products' in request.path %}active{% endif %}">
+                    <i class="bi bi-grid"></i>
+                    <span>{% trans "Shop" %}</span>
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="#mobileSearchOffcanvas" data-bs-toggle="offcanvas" class="nav-item-bottom center-action">
+                    <div class="search-circle">
+                        <i class="bi bi-search"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="{% url 'wishlist' %}" class="nav-item-bottom position-relative {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}">
+                    <i class="bi bi-heart"></i>
+                    {% if wishlist_count > 0 %}
+                        <span class="badge-mini">{{ wishlist_count }}</span>
+                    {% endif %}
+                    <span>{% trans "Save" %}</span>
+                </a>
+            </div>
+            <div class="col text-center">
+                <a href="#cartOffcanvas" data-bs-toggle="offcanvas" class="nav-item-bottom position-relative">
+                    <i class="bi bi-bag"></i>
+                    {% if cart_count > 0 %}
+                        <span class="badge-mini">{{ cart_count }}</span>
+                    {% endif %}
+                    <span>{% trans "Cart" %}</span>
+                </a>
+            </div>
         </div>
-      </div>
-
-      {% if user.is_authenticated %}
-      <div class="d-flex gap-3">
-        <a class="nav-link fw-bold text-uppercase position-relative" href="{% url 'wishlist' %}">
-          <i class="bi bi-heart" style="font-size: 1.2rem;"></i>
-          {% trans "Wishlist" %}
-          {% if wishlist_count > 0 %}
-          <span class="badge bg-danger rounded-pill ms-1">{{ wishlist_count }}</span>
-          {% endif %}
-        </a>
-        <a class="nav-link fw-bold text-uppercase position-relative" href="#cartOffcanvas" data-bs-toggle="offcanvas"
-          aria-controls="cartOffcanvas">
-          <i class="bi bi-cart" style="font-size: 1.2rem;"></i>
-          {% trans "Cart" %}
-          {% if cart_count > 0 %}
-          <span class="badge bg-danger rounded-pill ms-1">{{ cart_count }}</span>
-          {% endif %}
-        </a>
-      </div>
-      {% endif %}
-
-      <hr>
-
-      {% if user.is_authenticated %}
-      <a class="nav-link fw-bold text-uppercase" href="{% url 'profile' %}">{% trans "Profile" %}</a>
-      <form action="{% url 'logout' %}" method="post" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-link nav-link fw-bold text-uppercase p-0 border-0">{% trans "Logout" %}</button>
-      </form>
-      {% else %}
-      <div class="d-flex gap-2">
-        <a href="{% url 'login' %}" class="btn btn-outline-dark rounded-pill fw-bold text-uppercase flex-fill py-2"
-          style="font-size: 0.75rem;">{% trans "Login" %}</a>
-        <a href="{% url 'register' %}" class="btn btn-dark rounded-pill fw-bold text-uppercase flex-fill py-2"
-          style="font-size: 0.75rem;">{% trans "Join Us" %}</a>
-      </div>
-      {% endif %}
     </div>
   </div>
 
-  </div>
 </nav>
+
+<!-- Mobile Search Offcanvas -->
+<div class="offcanvas offcanvas-top text-bg-dark" tabindex="-1" id="mobileSearchOffcanvas" style="height: auto;">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title font-monospace text-accent"><i class="bi bi-search me-2"></i>{% trans "Search" %}</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body my-3">
+    <form action="{% url 'search' %}" class="d-flex gap-2">
+      <input type="text" name="q" class="form-control form-control-lg bg-dark text-white border-secondary shadow-none" placeholder="{% trans 'Search for products...' %}" autofocus>
+      <button type="submit" class="btn btn-accent"><i class="bi bi-arrow-right"></i></button>
+    </form>
+  </div>
+</div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@800&display=swap');
+
+  :root {
+    --accent: #10b981;
+    --nav-bg: #0f172a; 
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  /* Main Nav Container */
+  .s3r-nav { 
+    background: rgba(15, 23, 42, 0.98) !important; 
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 0;
+    z-index: 1060;
+  }
+
+  /* Branding */
+  .brand-box {
+    background: var(--accent); color: var(--nav-bg); padding: 2px 8px;
+    border-radius: 6px; font-family: 'Sora', sans-serif; margin-right: 4px;
+  }
+  .navbar-brand { color: #fff !important; font-size: 1.4rem; }
+
+  /* Nav Links */
+  .nav-link-cyber {
+    font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400;
+    color: rgba(255,255,255,0.7) !important; text-transform: uppercase;
+    letter-spacing: 1px; transition: 0.3s;
+  }
+  .nav-link-cyber:hover { color: var(--accent) !important; }
+  .nav-num { color: var(--accent); font-weight: 700; font-size: 0.7rem; margin-right: 5px; opacity: 0.5; }
+
+  /* Search Engine Style */
+  .nav-search-v2 {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 8px 15px; color: #fff; font-size: 0.8rem;
+    width: 200px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-mono);
+  }
+  .nav-search-v2:focus { width: 300px; border-color: var(--accent); outline: none; background: rgba(255,255,255,0.1); }
+  .search-key { 
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4);
+    font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; pointer-events: none;
+  }
+
+  /* Avatar Hexagonish */
+  .avatar-hex {
+    width: 40px; height: 40px; overflow: hidden; border-radius: 12px;
+    border: 2px solid var(--accent); background: #1e293b;
+    transition: 0.3s;
+  }
+  .avatar-hex img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-init { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: bold; }
+  .nav-user-trigger:hover .avatar-hex { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4); }
+
+  /* Dark Dropdown */
+  .dark-dropdown { background: #1e293b !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+  .dark-dropdown .dropdown-item:hover { background: rgba(16, 185, 129, 0.1); color: var(--accent) !important; }
+
+  /* Buttons */
+  .btn-nav-primary {
+    background: var(--accent); color: var(--nav-bg); font-family: var(--font-mono);
+    font-size: 0.7rem; font-weight: 700; padding: 8px 20px; border-radius: 6px; text-decoration: none;
+  }
+  .btn-nav-outline {
+    border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: var(--font-mono);
+    font-size: 0.7rem; padding: 8px 20px; border-radius: 6px; text-decoration: none; transition: 0.3s;
+  }
+  .btn-nav-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .badge-dot {
+    position: absolute; top: 0; right: 0; width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .icon-btn-tech { position: relative; color: rgba(255,255,255,0.6); transition: 0.3s; }
+  .icon-btn-tech:hover { color: var(--accent); }
+
+  .btn-accent {
+    background: var(--accent); border: none; color: var(--nav-bg); font-weight: bold; border-radius: 6px; transition: 0.3s; padding: 0 20px;
+  }
+  .btn-accent:hover { opacity: 0.9; }
+
+  /* Bottom Nav Style */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 65px;
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1050;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.4);
+    transition: 0.3s;
+    height: 100%;
+    padding-top: 8px;
+  }
+
+  .nav-item-bottom i { font-size: 1.25rem; margin-bottom: 2px; }
+  .nav-item-bottom span { font-size: 0.6rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; }
+  .nav-item-bottom.active { color: var(--accent); }
+
+  .search-circle {
+    width: 48px; height: 48px;
+    background: var(--accent);
+    color: #0f172a;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: -35px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    border: 4px solid #0f172a;
+  }
+  .search-circle i { margin-bottom: 0; font-size: 1.2rem; }
+
+  .badge-mini {
+    position: absolute; top: 2px; right: 50%; transform: translateX(12px);
+    background: var(--accent); color: #0f172a;
+    font-size: 0.55rem; font-weight: bold;
+    min-width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 991px) {
+    body { padding-bottom: 65px; }
+    .navbar-collapse {
+        background: #0f172a;
+        margin: 0 -12px;
+        padding: 20px;
+        position: absolute;
+        top: 100%;
+        width: 100vw;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+    }
+  }
+</style>

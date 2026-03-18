@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from .models import Category
+from .models import Category, Wishlist
 
 
 def menu_categories(request):
@@ -14,3 +14,13 @@ def menu_categories(request):
         cache.set("category_count", count, 3600)
 
     return {"menu_categories": categories, "has_more_categories": count > 10}
+
+
+def wishlist(request):
+    count = 0
+    if request.user.is_authenticated:
+        try:
+            count = Wishlist.objects.filter(user=request.user.profile).count()
+        except Exception:
+            pass
+    return {"wishlist_count": count}

@@ -2,113 +2,396 @@
 {% load i18n %}
 {% load bootstrap_icons %}
 
-{% block title %}{% trans "Order Details" %} #{{ order.id }}{% endblock %}
+{% block title %}{% trans "Order" %} #{{ order.id }} — SMART S3R{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <a href="{% url 'orders:order_list' %}" class="btn btn-light rounded-circle shadow-sm">
-            <i class="bi bi-arrow-left"></i>
-        </a>
-        <h1 class="h3 fw-bold mb-0">{% trans "Order Details" %} #{{ order.id }}</h1>
-    </div>
 
-    <div class="row g-4">
-        <!-- Order Info -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-4">{% trans "Order Items" %}</h5>
-                    {% for item in items %}
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="flex-shrink-0 rounded-3 border overflow-hidden" style="width: 64px; height: 64px;">
-                            {% if item.product.img %}
-                                <img src="{{ item.product.img.url }}" class="w-100 h-100" style="object-fit: cover;">
-                            {% elif item.product.img_link %}
-                                <img src="{{ item.product.img_link }}" class="w-100 h-100" style="object-fit: cover;">
-                            {% endif %}
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="fw-bold mb-1">{{ item.product.name }}</h6>
-                            <p class="text-muted small mb-0">{{ item.quantity }} x {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.price }}</p>
-                        </div>
-                        <div class="text-end">
-                            <span class="fw-bold">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.subtotal }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    
-                    <hr class="my-4">
-                    
-                    <div class="row">
-                        <div class="col-md-6 ms-auto">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">{% trans "Subtotal" %}</span>
-                                <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">{% trans "Shipping" %}</span>
-                                <span class="text-success small fw-bold">{% trans "FREE" %}</span>
-                            </div>
-                            <div class="d-flex justify-content-between mt-3 pt-3 border-top">
-                                <h5 class="fw-bold">{% trans "Total" %}</h5>
-                                <h5 class="fw-bold text-primary">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 text-center py-5">
-                    <h6 class="text-muted text-uppercase small fw-bold mb-3">{% trans "Order Status" %}</h6>
-                    <div class="d-flex justify-content-center align-items-center gap-2 h4 fw-bold">
-                        <span class="badge rounded-pill 
-                            {% if order.status == 'delivered' %}bg-success
-                            {% elif order.status == 'cancelled' %}bg-danger
-                            {% elif order.status == 'pending' %}bg-warning text-dark
-                            {% else %}bg-primary{% endif %} bg-opacity-10 
-                            {% if order.status == 'delivered' %}text-success
-                            {% elif order.status == 'cancelled' %}text-danger
-                            {% elif order.status == 'pending' %}text-warning
-                            {% else %}text-primary{% endif %} px-4 py-2">
-                            {{ order.get_status_display }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
+:root {
+  --accent:      #10b981;
+  --accent-mid:  rgba(16,185,129,0.12);
+  --accent-dim:  rgba(16,185,129,0.07);
+  --bg:          #f8fafc;
+  --white:       #ffffff;
+  --text-1:      #0f172a;
+  --text-2:      #475569;
+  --text-3:      #94a3b8;
+  --border:      #e2e8f0;
+  --border-2:    #cbd5e1;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --font-head:   'Sora', sans-serif;
+  --font-body:   'DM Sans', sans-serif;
+}
+body { font-family: var(--font-body); background: var(--bg); }
 
-        <!-- Sidebar Info -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">{% trans "Shipping Details" %}</h6>
-                    <p class="fw-bold mb-1">{{ order.user.get_full_name|default:order.user.username }}</p>
-                    <p class="text-muted mb-2"><i class="bi bi-telephone me-1"></i> {{ order.phone }}</p>
-                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt me-1"></i> {{ order.shipping_address }}</p>
-                    
-                    {% if order.notes %}
-                    <hr class="my-3">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-2">{% trans "Order Notes" %}</h6>
-                    <p class="text-muted small mb-0">{{ order.notes }}</p>
-                    {% endif %}
-                </div>
-            </div>
+/* ── Page header ───────────────────────────── */
+.page-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 2rem;
+}
+.back-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white); border: 1.5px solid var(--border);
+  color: var(--text-2); text-decoration: none; font-size: 0.95rem;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.back-btn:hover { border-color: var(--text-1); color: var(--text-1); }
+.page-title {
+  font-family: var(--font-head); font-size: 1.5rem; font-weight: 800;
+  color: var(--text-1); letter-spacing: -0.02em; margin: 0;
+}
+.order-id-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  color: var(--accent); font-family: var(--font-head);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em;
+  padding: 3px 11px; border-radius: 100px; text-transform: uppercase;
+  margin-left: 4px;
+}
 
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold text-uppercase small text-muted mb-3">{% trans "Payment" %}</h6>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-primary h2 mb-0"><i class="bi bi-cash"></i></div>
-                        <div>
-                            <p class="fw-bold mb-0">{% trans "Cash on Delivery" %}</p>
-                            <p class="text-muted small mb-0">{% if order.payment_status == 'paid' %}{% trans "Paid" %}{% else %}{% trans "Pay when you receive your order" %}{% endif %}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+/* ── Panel ─────────────────────────────────── */
+.panel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.panel-head {
+  padding: 18px 22px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; flex-shrink: 0;
+}
+.pi-green  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(16,185,129,0.2); }
+.pi-blue   { background: rgba(99,102,241,0.08); color: #6366f1; border: 1px solid rgba(99,102,241,0.18); }
+.pi-amber  { background: rgba(245,158,11,0.08); color: #f59e0b; border: 1px solid rgba(245,158,11,0.18); }
+.pi-slate  { background: rgba(100,116,139,0.08); color: #64748b; border: 1px solid rgba(100,116,139,0.18); }
+
+.panel-title {
+  font-family: var(--font-head); font-size: 0.92rem; font-weight: 800; color: var(--text-1); margin: 0;
+}
+.panel-body { padding: 16px 22px 22px; }
+
+/* ── Order item row ────────────────────────── */
+.order-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.order-item:last-child { border-bottom: none; }
+.item-thumb {
+  width: 60px; height: 60px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); overflow: hidden; flex-shrink: 0;
+  background: var(--bg);
+}
+.item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.item-thumb-ph { width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:1.2rem; }
+.item-info { flex: 1; min-width: 0; }
+.item-name { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; color: var(--text-1); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-qty  { font-size: 0.78rem; color: var(--text-3); }
+.item-sub  { font-family: var(--font-head); font-size: 0.92rem; font-weight: 800; color: var(--text-1); flex-shrink: 0; }
+
+/* ── Totals ────────────────────────────────── */
+.totals-wrap { margin-top: 4px; }
+.total-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.total-key { font-size: 0.85rem; color: var(--text-2); }
+.total-val { font-size: 0.85rem; color: var(--text-1); font-weight: 500; }
+.total-free { font-family: var(--font-head); font-size: 0.75rem; font-weight: 700; color: var(--accent); }
+.total-final-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 12px; border-top: 1.5px solid var(--border);
+}
+.total-final-key { font-family: var(--font-head); font-size: 0.95rem; font-weight: 800; color: var(--text-1); }
+.total-final-val { font-family: var(--font-head); font-size: 1.15rem; font-weight: 800; color: var(--text-1); }
+
+/* ── Status tracker ────────────────────────── */
+.status-track { padding: 20px 0 8px; }
+.track-steps { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
+.track-steps::before {
+  content: ''; position: absolute;
+  top: 16px; left: 16px; right: 16px; height: 2px;
+  background: var(--border); z-index: 0;
+}
+.track-step { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; position: relative; z-index: 1; }
+.track-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; border: 2px solid var(--border);
+  background: var(--white); color: var(--text-3);
+  transition: all 0.2s;
+}
+.track-dot.done  { background: var(--accent); border-color: var(--accent); color: #fff; }
+.track-dot.active { background: #fff; border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 4px var(--accent-mid); }
+.track-dot.cancel { background: #fef2f2; border-color: #fca5a5; color: #ef4444; }
+.track-label { font-family: var(--font-head); font-size: 0.68rem; font-weight: 700; color: var(--text-3); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; }
+.track-label.active { color: var(--accent); }
+.track-label.done   { color: var(--text-2); }
+
+/* current status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-head); font-size: 0.78rem; font-weight: 700;
+  padding: 6px 16px; border-radius: 100px;
+}
+.sb-pending   { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.sb-confirmed { background: rgba(99,102,241,0.08); color: #4f46e5; border: 1px solid rgba(99,102,241,0.2); }
+.sb-shipped   { background: rgba(245,158,11,0.08); color: #b45309; border: 1px solid rgba(245,158,11,0.2); }
+.sb-delivered { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.sb-cancelled { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.sb-dot { width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+/* ── Shipping card ─────────────────────────── */
+.info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.info-row:last-child { margin-bottom: 0; }
+.info-icon { color: var(--text-3); font-size: 0.9rem; margin-top: 2px; flex-shrink: 0; }
+.info-text .lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.info-text .val { font-size: 0.88rem; color: var(--text-1); font-weight: 500; line-height: 1.5; }
+
+/* notes box */
+.notes-box {
+  margin-top: 12px; padding: 10px 14px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem; color: var(--text-2); line-height: 1.6; font-style: italic;
+}
+
+/* ── Payment card ──────────────────────────── */
+.payment-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px; background: linear-gradient(135deg,#f0fdf4,#ecfdf5);
+  border: 1px solid rgba(16,185,129,0.2); border-radius: var(--radius-md);
+}
+.pay-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: var(--accent); flex-shrink: 0;
+}
+.pay-title { font-family: var(--font-head); font-size: 0.88rem; font-weight: 700; color: var(--text-1); margin-bottom: 2px; }
+.pay-sub   { font-size: 0.75rem; color: var(--text-2); }
+.pay-check {
+  margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.7rem; flex-shrink: 0;
+}
+</style>
+
+
+{# ── Page header ─────────────────────────────── #}
+<div class="page-header">
+  <a href="{% url 'orders:order_list' %}" class="back-btn">
+    <i class="bi bi-arrow-left"></i>
+  </a>
+  <h1 class="page-title">
+    {% trans "Order Details" %}
+    <span class="order-id-chip">#{{ order.id }}</span>
+  </h1>
 </div>
+
+
+<div class="row g-4">
+
+  {# ── Left col ── #}
+  <div class="col-lg-8">
+
+    {# Order items #}
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon pi-blue"><i class="bi bi-bag-fill"></i></div>
+        <h2 class="panel-title">{% trans "Order Items" %}</h2>
+      </div>
+      <div class="panel-body">
+        {% for item in items %}
+        <div class="order-item">
+          <div class="item-thumb">
+            {% if item.product.img %}
+              <img src="{{ item.product.img.url }}" alt="{{ item.product.name }}">
+            {% elif item.product.img_link %}
+              <img src="{{ item.product.img_link }}" alt="{{ item.product.name }}">
+            {% else %}
+              <div class="item-thumb-ph"><i class="bi bi-phone"></i></div>
+            {% endif %}
+          </div>
+          <div class="item-info">
+            <div class="item-name">{{ item.product.name }}</div>
+            <div class="item-qty">
+              {{ item.quantity }} × {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.price }}
+            </div>
+          </div>
+          <div class="item-sub">
+            {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.subtotal }}
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="totals-wrap mt-3">
+          <div class="total-row">
+            <span class="total-key">{% trans "Subtotal" %}</span>
+            <span class="total-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
+          </div>
+          <div class="total-row">
+            <span class="total-key">{% trans "Shipping" %}</span>
+            <span class="total-free">{% trans "FREE" %}</span>
+          </div>
+          <div class="total-final-row">
+            <span class="total-final-key">{% trans "Total" %}</span>
+            <span class="total-final-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Order status #}
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon pi-amber"><i class="bi bi-activity"></i></div>
+        <h2 class="panel-title">{% trans "Order Status" %}</h2>
+      </div>
+      <div class="panel-body">
+
+        {# Current badge #}
+        <div class="mb-4">
+          <span class="status-badge
+            {% if order.status == 'pending'   %}sb-pending
+            {% elif order.status == 'confirmed'%}sb-confirmed
+            {% elif order.status == 'shipped'  %}sb-shipped
+            {% elif order.status == 'delivered'%}sb-delivered
+            {% elif order.status == 'cancelled'%}sb-cancelled
+            {% else %}sb-pending{% endif %}">
+            <span class="sb-dot"></span>
+            {{ order.get_status_display }}
+          </span>
+        </div>
+
+        {# Visual tracker (skip if cancelled) #}
+        {% if order.status != 'cancelled' %}
+        <div class="status-track">
+          <div class="track-steps">
+
+            {# Pending #}
+            <div class="track-step">
+              <div class="track-dot {% if order.status == 'pending' %}active{% elif order.status != 'pending' %}done{% endif %}">
+                <i class="bi {% if order.status == 'pending' %}bi-clock{% else %}bi-check-lg{% endif %}"></i>
+              </div>
+              <span class="track-label {% if order.status == 'pending' %}active{% else %}done{% endif %}">{% trans "Pending" %}</span>
+            </div>
+
+            {# Confirmed #}
+            <div class="track-step">
+              <div class="track-dot
+                {% if order.status == 'confirmed' %}active
+                {% elif order.status == 'shipped' or order.status == 'delivered' %}done
+                {% endif %}">
+                <i class="bi {% if order.status == 'shipped' or order.status == 'delivered' %}bi-check-lg{% else %}bi-bag-check{% endif %}"></i>
+              </div>
+              <span class="track-label
+                {% if order.status == 'confirmed' %}active
+                {% elif order.status == 'shipped' or order.status == 'delivered' %}done
+                {% endif %}">{% trans "Confirmed" %}</span>
+            </div>
+
+            {# Shipped #}
+            <div class="track-step">
+              <div class="track-dot
+                {% if order.status == 'shipped' %}active
+                {% elif order.status == 'delivered' %}done
+                {% endif %}">
+                <i class="bi {% if order.status == 'delivered' %}bi-check-lg{% else %}bi-truck{% endif %}"></i>
+              </div>
+              <span class="track-label
+                {% if order.status == 'shipped' %}active
+                {% elif order.status == 'delivered' %}done
+                {% endif %}">{% trans "Shipped" %}</span>
+            </div>
+
+            {# Delivered #}
+            <div class="track-step">
+              <div class="track-dot {% if order.status == 'delivered' %}done{% endif %}">
+                <i class="bi {% if order.status == 'delivered' %}bi-check-lg{% else %}bi-house-check{% endif %}"></i>
+              </div>
+              <span class="track-label {% if order.status == 'delivered' %}done{% endif %}">{% trans "Delivered" %}</span>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>{# /left #}
+
+
+  {# ── Right col ── #}
+  <div class="col-lg-4">
+
+    {# Shipping info #}
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon pi-green"><i class="bi bi-geo-alt-fill"></i></div>
+        <h2 class="panel-title">{% trans "Shipping Details" %}</h2>
+      </div>
+      <div class="panel-body">
+        <div class="info-row">
+          <i class="bi bi-person-fill info-icon"></i>
+          <div class="info-text">
+            <div class="lbl">{% trans "Name" %}</div>
+            <div class="val">{{ order.user.get_full_name|default:order.user.username }}</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <i class="bi bi-telephone-fill info-icon"></i>
+          <div class="info-text">
+            <div class="lbl">{% trans "Phone" %}</div>
+            <div class="val">{{ order.phone }}</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <i class="bi bi-map-fill info-icon"></i>
+          <div class="info-text">
+            <div class="lbl">{% trans "Address" %}</div>
+            <div class="val">{{ order.shipping_address }}</div>
+          </div>
+        </div>
+        {% if order.notes %}
+        <div class="notes-box">
+          <i class="bi bi-chat-left-quote me-1"></i>{{ order.notes }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Payment #}
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon pi-slate"><i class="bi bi-credit-card-fill"></i></div>
+        <h2 class="panel-title">{% trans "Payment" %}</h2>
+      </div>
+      <div class="panel-body">
+        <div class="payment-row">
+          <div class="pay-icon"><i class="bi bi-truck"></i></div>
+          <div>
+            <div class="pay-title">{% trans "Cash on Delivery" %}</div>
+            <div class="pay-sub">
+              {% if order.payment_status == 'paid' %}
+                <span style="color:var(--accent);font-weight:700;">{% trans "Paid" %}</span>
+              {% else %}
+                {% trans "Pay when your order arrives" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="pay-check"><i class="bi bi-check-lg"></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>{# /right #}
+
+</div>
+
 {% endblock %}

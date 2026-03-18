@@ -3,12 +3,8 @@ from products.models import Product
 
 def cart(request):
     """
-    Make cart items, total and count available globally for the offcanvas panel.
-
-    Performance notes:
-    - Skips the DB entirely when the session cart is empty (no cart key or
-      all values are 0) — so static pages like Home/About pay zero cost.
-    - Uses a single IN-query + select_related so there is NO N+1.
+    Make cart items, total and count available globally for the offcanvas panel (Sync).
+    Single query — no N+1.
     """
     raw_cart = request.session.get("cart", {})
 

@@ -14,6 +14,11 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["user"], name="profile_user_idx"),
+        ]
+
     def __str__(self):
         return f"Profile of {self.user.username}"
 
@@ -27,6 +32,13 @@ class Address(models.Model):
     area = models.CharField(max_length=100, blank=True)
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Addresses"
+        indexes = [
+            models.Index(fields=["user", "is_default"], name="addr_user_def_idx"),
+            models.Index(fields=["created_at"], name="addr_created_idx"),
+        ]
 
     def __str__(self):
         return f"{self.name} - {self.city}"

@@ -51,6 +51,8 @@ class Order(models.Model):
             # most common query: all orders for a user, sorted by newest
             models.Index(fields=["user", "-created_at"], name="order_user_created_idx"),
             models.Index(fields=["status"], name="order_status_idx"),
+            models.Index(fields=["payment_method"], name="order_pay_method_idx"),
+            models.Index(fields=["payment_status"], name="order_pay_status_idx"),
         ]
 
     def __str__(self):
