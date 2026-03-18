@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.db.models import Prefetch
 
 from products.models import Product, Category, Wishlist, Review
 from products.forms import ReviewForm
@@ -133,19 +134,24 @@ async def product_detail(request, slug):
         p_data = await sync_to_async(get_product_data)()
         await cache.aset(cache_key, p_data, 60 * 30)
 
-    # Reviews are fetched fresh (no cache for now to show updates immediately)
+    # Reviews fetched fresh with proper prefetch to avoid N+1
     def fetch_reviews():
-        reviews = list(p_data["product"].reviews.select_related("user__user").all())
+        reviews = list(
+            p_data["product"]
+            .reviews.select_related("user", "user__user", "user__user__profile")
+            .all()
+        )
         is_in_wishlist = False
         user_review = None
         if request.user.is_authenticated:
+            # Single query for wishlist check
             is_in_wishlist = Wishlist.objects.filter(
                 user=request.user.profile, product_id=p_data["product"].id
             ).exists()
-            for review in reviews:
-                if str(review.user_id) == str(request.user.profile.id):
-                    user_review = review
-                    break
+            # Find user's existing review
+            user_review = next(
+                (r for r in reviews if r.user_id == request.user.profile.id), None
+            )
         return reviews, is_in_wishlist, user_review
 
     reviews, is_in_wishlist, user_review = await sync_to_async(fetch_reviews)()
@@ -167,6 +173,7 @@ async def product_detail(request, slug):
 def add_review(request, product_id):
     """Add or update a product review."""
     from products.forms import ReviewForm as RF
+
     product = get_object_or_404(Product, id=product_id)
     form = RF(request.POST)
 
@@ -181,8 +188,20 @@ def add_review(request, product_id):
         )
         # Clear product detail cache to refresh potential average rating displays elsewhere
         cache.delete(f"product_detail_{product.slug}")
+        cache.delete("all_products_reviews")
 
     return redirect(product.get_absolute_url())
+
+
+@sync_to_async
+@login_required
+def delete_review(request, review_id):
+    """Delete a product review."""
+    review = get_object_or_404(Review, id=review_id, user=request.user.profile)
+    product_slug = review.product.slug
+    review.delete()
+    cache.delete(f"product_detail_{product_slug}")
+    return redirect(f"/products/{product_slug}/")
 
 
 async def category_list(request):

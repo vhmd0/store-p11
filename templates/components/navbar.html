@@ -12,11 +12,14 @@
 
     <!-- 2. End Actions (Flex-End in Desktop) -->
     <div class="d-flex align-items-center order-lg-3 gap-2 gap-md-3 ms-auto ms-lg-0">
-        
-        <!-- Mobile Search Toggle -->
-        <a href="#mobileSearchOffcanvas" data-bs-toggle="offcanvas" class="nav-icon-link d-lg-none">
-            <i class="bi bi-search"></i>
-        </a>
+
+        <!-- Mobile Search Bar (Visible below lg) -->
+        <div class="flex-grow-1 me-2 d-lg-none">
+            <form action="{% url 'search' %}" class="nav-search-form-mobile">
+                <input type="text" name="q" placeholder="{% trans 'Search products...' %}" class="nav-search-input-mobile">
+                <button type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
 
         <!-- Desktop Search Bar -->
         <div class="d-none d-lg-block">
@@ -33,20 +36,24 @@
                 <span class="d-none d-md-inline ms-1 small fw-bold text-uppercase">{{ request.LANGUAGE_CODE|slice:":2" }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end border-0 shadow-xl dark-dropdown mt-2 p-1">
-                <form action="{% url 'set_language' %}" method="post" class="m-0 px-1 py-1">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                    <li>
-                        <button type="submit" name="language" value="ar" class="dropdown-item rounded-3 py-2 text-white px-3 {% if request.LANGUAGE_CODE|slice:':2' == 'ar' %}active-lang{% endif %}">
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" class="m-0 p-0">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="ar" class="dropdown-item rounded-3 py-2 text-white px-3 w-100 text-start {% if request.LANGUAGE_CODE|slice:':2' == 'ar' %}active-lang{% endif %}">
                             <span class="small font-mono">العربية (AR)</span>
                         </button>
-                    </li>
-                    <li>
-                        <button type="submit" name="language" value="en" class="dropdown-item rounded-3 py-2 text-white px-3 {% if request.LANGUAGE_CODE|slice:':2' == 'en' %}active-lang{% endif %}">
+                    </form>
+                </li>
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" class="m-0 p-0">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="en" class="dropdown-item rounded-3 py-2 text-white px-3 w-100 text-start {% if request.LANGUAGE_CODE|slice:':2' == 'en' %}active-lang{% endif %}">
                             <span class="small font-mono">English (EN)</span>
                         </button>
-                    </li>
-                </form>
+                    </form>
+                </li>
             </ul>
         </div>
 
@@ -104,23 +111,56 @@
         </button>
     </div>
 
-    <!-- 3. Central Links (Centered) -->
-    <div class="collapse navbar-collapse justify-content-center order-lg-2" id="navbarNav">
-      <ul class="navbar-nav gap-lg-1 mt-3 mt-lg-0">
+    <!-- 3. Central Links (Always Visible on Desktop) -->
+    <div class="d-none d-lg-flex justify-content-center order-lg-2 flex-grow-1 mx-lg-4">
+      <ul class="navbar-nav gap-lg-1 mx-auto">
+        <li class="nav-item">
+          <a class="nav-link-cyber {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+            <span class="nav-num">00</span> {% trans "Home" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link-cyber {% if 'products' in request.path %}active{% endif %}" href="{% url 'products:products' %}">
+            <span class="nav-num">01</span> {% trans "Shop" %}
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link-cyber dropdown-toggle {% if 'category' in request.path %}active{% endif %}" href="#" data-bs-toggle="dropdown" data-bs-display="static">
+            <span class="nav-num">02</span> {% trans "Categories" %}
+          </a>
+          <ul class="dropdown-menu border-0 shadow-xl dark-dropdown mt-lg-2">
+            <li><a class="dropdown-item py-2 fw-semibold text-white rounded-3 mb-1" href="{% url 'categories:categories' %}">{% trans "All Categories" %}</a></li>
+            <li><hr class="dropdown-divider opacity-25 my-2"></li>
+            {% for cat in menu_categories %}
+              <li><a class="dropdown-item py-2 fw-semibold text-white rounded-3" href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link-cyber {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+            <span class="nav-num">03</span> {% trans "About Us" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mobile Nav Links (Collapsible on Mobile) -->
+    <div class="collapse navbar-collapse d-lg-none" id="navbarNav">
+      <ul class="navbar-nav gap-1 mt-3 pb-3">
+        <li class="nav-item">
+          <a class="nav-link-cyber" href="{% url 'home' %}">
+            <span class="nav-num">00</span> {% trans "Home" %}
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link-cyber" href="{% url 'products:products' %}">
             <span class="nav-num">01</span> {% trans "Shop" %}
           </a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link-cyber dropdown-toggle" href="#" data-bs-toggle="dropdown">
+        <li class="nav-item">
+          <a class="nav-link-cyber" href="{% url 'categories:categories' %}">
             <span class="nav-num">02</span> {% trans "Categories" %}
           </a>
-          <ul class="dropdown-menu border-0 shadow-xl dark-dropdown animate slideIn mt-lg-2">
-            {% for cat in menu_categories %}
-              <li><a class="dropdown-item py-2 fw-semibold text-white" href="{% url 'products:products' %}?category={{ cat.slug }}">{{ cat.name }}</a></li>
-            {% endfor %}
-          </ul>
         </li>
         <li class="nav-item">
           <a class="nav-link-cyber" href="{% url 'about' %}">
@@ -128,27 +168,30 @@
           </a>
         </li>
       </ul>
-    </div>
   </div>
 </nav>
 
-<!-- Mobile Bottom Navigation (نفس الكود مع تحسينات RTL) -->
+<!-- Mobile Bottom Navigation -->
 <div class="bottom-nav d-lg-none">
     <div class="row g-0 h-100 align-items-center text-center">
         <div class="col"><a href="{% url 'home' %}" class="nav-item-bottom {% if request.resolver_match.url_name == 'home' %}active{% endif %}"><i class="bi bi-house-door"></i><span>{% trans "Home" %}</span></a></div>
         <div class="col"><a href="{% url 'products:products' %}" class="nav-item-bottom {% if 'products' in request.path %}active{% endif %}"><i class="bi bi-grid-3x3-gap"></i><span>{% trans "Shop" %}</span></a></div>
-        <div class="col"><a href="#mobileSearchOffcanvas" data-bs-toggle="offcanvas" class="nav-item-bottom"><div class="search-btn-flat-v2"><i class="bi bi-search"></i></div></a></div>
+        <div class="col"><a href="{% url 'categories:categories' %}" class="nav-item-bottom {% if 'category' in request.path %}active{% endif %}"><i class="bi bi-tags"></i><span>{% trans "Categories" %}</span></a></div>
         <div class="col"><a href="{% url 'wishlist' %}" class="nav-item-bottom position-relative {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}"><i class="bi bi-heart"></i>{% if wishlist_count > 0 %}<span class="badge-mini">{{ wishlist_count }}</span>{% endif %}<span>{% trans "Wishlist" %}</span></a></div>
         <div class="col"><a href="#cartOffcanvas" data-bs-toggle="offcanvas" class="nav-item-bottom position-relative"><i class="bi bi-bag"></i>{% if cart_count > 0 %}<span class="badge-mini">{{ cart_count }}</span>{% endif %}<span>{% trans "Cart" %}</span></a></div>
     </div>
 </div>
 
-<!-- Mobile Search Offcanvas (بدون تغيير) -->
-<div class="offcanvas offcanvas-top text-bg-dark" tabindex="-1" id="mobileSearchOffcanvas" style="height: auto; border-bottom: 2px solid var(--accent);">
-  <div class="offcanvas-body py-4">
+<!-- Mobile Search Offcanvas -->
+<div class="offcanvas offcanvas-top text-bg-dark border-0 shadow-lg" tabindex="-1" id="mobileSearchOffcanvas" style="height: auto; border-bottom: 2px solid var(--accent) !important; z-index: 9999;">
+  <div class="offcanvas-header pb-0">
+      <h6 class="offcanvas-title fw-bold text-accent font-mono"><i class="bi bi-search me-2"></i>{% trans "Search" %}</h6>
+      <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body pt-3 pb-4">
     <form action="{% url 'search' %}" class="d-flex gap-2">
-      <input type="text" name="q" class="form-control bg-dark text-white border-secondary shadow-none" placeholder="{% trans 'Search for products...' %}" autofocus>
-      <button type="submit" class="btn btn-accent"><i class="bi bi-search"></i></button>
+      <input type="text" name="q" class="form-control bg-dark text-white border-secondary shadow-none p-3" placeholder="{% trans 'Search for products, brands...' %}" autofocus style="border-radius: 12px;">
+      <button type="submit" class="btn btn-accent px-4" style="border-radius: 12px;"><i class="bi bi-chevron-right fs-5"></i></button>
     </form>
   </div>
 </div>
@@ -173,6 +216,17 @@
   .nav-search-input { background: transparent; border: none; color: #fff; font-size: 0.75rem; outline: none; width: 110px; transition: 0.3s; }
   .nav-search-input:focus { width: 160px; }
   .nav-search-form button { background: transparent; border: none; color: var(--accent); font-size: 0.9rem; padding-inline-start: 8px; }
+
+  /* Mobile Search */
+  .nav-search-form-mobile { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; transition: 0.3s; }
+  .nav-search-form-mobile:focus-within { border-color: var(--accent); box-shadow: 0 0 15px rgba(16,185,129,0.15); }
+  .nav-search-input-mobile { background: transparent; border: none; color: #fff; font-size: 0.8rem; outline: none; width: 100%; }
+  .nav-search-input-mobile::placeholder { color: rgba(255,255,255,0.5); }
+  .nav-search-form-mobile button { background: transparent; border: none; color: var(--accent); font-size: 1rem; padding-inline-start: 8px; }
+
+  @media (min-width: 992px) {
+    .nav-search-form-mobile { display: none; }
+  }
 
   /* User Avatar */
   .avatar-hex { width: 32px; height: 32px; border-radius: 10px; overflow: hidden; border: 2px solid var(--accent); background: #1e293b; transition: 0.2s; }
@@ -209,13 +263,6 @@
   .nav-item-bottom.active { color: var(--accent); }
   .search-btn-flat-v2 { width: 38px; height: 38px; background: var(--accent); color: #0f172a; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 
-  /* إصلاحات RTL للقوائم المنسدلة */
-  [dir="rtl"] .nav-user-trigger + .dropdown-menu,
-  [dir="rtl"] .nav-icon-link + .dropdown-menu {
-      left: 0 !important;
-      right: auto !important;
-      transform: none !important;
-  }
 
   /* ضمان عرض مناسب للقائمة في الشاشات الصغيرة */
   .dark-dropdown {
@@ -227,5 +274,21 @@
     body { padding-bottom: 60px !important; }
     .navbar-collapse { background: #0f172a; border-bottom: 2px solid var(--accent); padding: 20px; position: absolute; top: 100%; left: 0; width: 100%; }
     .nav-num { display: none; }
+    .navbar-collapse.show { max-height: 70vh; overflow-y: auto; }
+  }
+
+  /* Dropdown hover for desktop */
+  @media (min-width: 992px) {
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+    .dropdown-menu {
+      display: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
   }
 </style>

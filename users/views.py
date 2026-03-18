@@ -51,9 +51,11 @@ def register(request):
 @login_required
 def profile(request):
     profile_obj, __ = Profile.objects.get_or_create(user=request.user)
-    recent_orders = (
+
+    # Prefetch items to avoid N+1 on order items
+    recent_orders = list(
         Order.objects.filter(user=request.user)
-        .prefetch_related("items__product")
+        .prefetch_related("items__product__brand")
         .order_by("-created_at")[:5]
     )
 
