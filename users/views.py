@@ -50,7 +50,7 @@ def register(request):
 
 @login_required
 def profile(request):
-    profile_obj, _created = Profile.objects.get_or_create(user=request.user)
+    profile_obj, _ = Profile.objects.get_or_create(user=request.user)
     recent_orders = (
         Order.objects.filter(user=request.user)
         .prefetch_related("items__product")
