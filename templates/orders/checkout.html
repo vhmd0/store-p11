@@ -328,7 +328,7 @@ body { font-family: var(--font-body); background: var(--bg); }
         <form action="{% url 'orders:create_order' %}" method="post" id="checkout-form">
           {% csrf_token %}
 
-          <div id="new-address-form" {% if addresses %}style="display:none;"{% endif %}>
+          <div id="new-address-form">
             <div class="field-wrap">
               <label class="field-label" for="phone"><i class="bi bi-telephone me-1"></i>{% trans "Phone Number" %}</label>
               <div class="input-shell">
@@ -445,22 +445,16 @@ body { font-family: var(--font-body); background: var(--bg); }
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const radios       = document.querySelectorAll('input[name="saved_address"]');
-  const newForm      = document.getElementById('new-address-form');
-  const phoneInput   = document.getElementById('phone');
-  const addrInput    = document.getElementById('shipping_address');
+  const radios     = document.querySelectorAll('input[name="saved_address"]');
+  const phoneInput = document.getElementById('phone');
+  const addrInput  = document.getElementById('shipping_address');
 
   if (radios.length > 0) {
     radios.forEach(function (radio) {
       radio.addEventListener('change', function () {
-        if (this.value === 'new') {
-          newForm.style.display = 'block';
-          if (phoneInput) phoneInput.required = true;
-          if (addrInput)  addrInput.required  = true;
-        } else {
-          newForm.style.display = 'none';
-          if (phoneInput) { phoneInput.required = false; phoneInput.value = this.dataset.phone; }
-          if (addrInput)  { addrInput.required  = false; addrInput.value  = this.dataset.address; }
+        if (this.value !== 'new' && phoneInput && addrInput) {
+          phoneInput.value = this.dataset.phone || '';
+          addrInput.value  = this.dataset.address || '';
         }
       });
     });
