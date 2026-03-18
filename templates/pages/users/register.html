@@ -2,67 +2,393 @@
 {% load bootstrap_icons %}
 {% load i18n %}
 
-{% block title %}{% trans "Register" %}{% endblock %}
+{% block title %}{% trans "Join SMART S3R" %}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card border-0 shadow-sm rounded-4 mt-5">
-      <div class="card-body p-4 p-md-5">
-        <div class="text-center mb-4">
-          <h2 class="fw-bold mb-1">{% trans "Create Account" %}</h2>
-          <p class="text-muted">{% trans "Join us and start shopping" %}</p>
+
+<div class="auth-wrapper">
+
+  {# ── Left Panel ── #}
+  <div class="auth-left d-none d-lg-flex">
+
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="left-content">
+
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        SMART S3R
+      </div>
+
+      <div class="icon-ring">
+        {% bs_icon 'person-plus-fill' size='2.2em' extra_classes='icon-main' %}
+      </div>
+
+      <h1 class="left-title">{% trans "Create Account" %}</h1>
+      <p class="left-sub">{% trans "Join our community. Get exclusive deals, real-time order tracking, and a personalized shopping experience." %}</p>
+
+      <ul class="perks-list">
+        <li>
+          <span class="perk-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+          <span>{% trans "Real-time order tracking" %}</span>
+        </li>
+        <li>
+          <span class="perk-icon"><i class="bi bi-heart-fill"></i></span>
+          <span>{% trans "Save your favorite items" %}</span>
+        </li>
+        <li>
+          <span class="perk-icon"><i class="bi bi-rocket-takeoff-fill"></i></span>
+          <span>{% trans "Faster checkout experience" %}</span>
+        </li>
+      </ul>
+
+      <div class="trust-bar">
+        <div class="avatar-stack">
+          <div class="av" style="background:#6366f1">A</div>
+          <div class="av" style="background:#10b981">B</div>
+          <div class="av" style="background:#f59e0b">C</div>
+          <div class="av" style="background:#ef4444">D</div>
         </div>
+        <span class="trust-text">{% trans "10,000+ members joined" %}</span>
+      </div>
 
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger">
-            {% for error in form.non_field_errors %}
-              {{ error }}
-            {% endfor %}
-          </div>
-        {% endif %}
+    </div>
+  </div>
 
-        <form method="POST" novalidate>
-          {% csrf_token %}
-          
+  {# ── Right Panel ── #}
+  <div class="auth-right">
+    <div class="form-card">
+
+      <div class="form-header">
+        <div class="mobile-logo d-lg-none">
+          {% bs_icon 'bag-heart-fill' size='1.6em' extra_classes='text-success' %}
+          <span>SMART S3R</span>
+        </div>
+        <h2 class="form-title">{% trans "Get Started" %}</h2>
+        <p class="form-sub">{% trans "Free forever. No credit card needed." %}</p>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="error-banner">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div class="fields-grid">
           {% for field in form %}
-            <div class="mb-3">
-              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-              {{ field }}
+            <div class="field-wrap {% if field.name == 'first_name' or field.name == 'last_name' %}field-half{% endif %}">
+
+              <label class="field-label" for="{{ field.id_for_label }}">
+                {{ field.label }}
+                {% if field.field.required %}<span class="req-star">*</span>{% endif %}
+              </label>
+
+              <div class="input-shell {% if field.errors %}has-error{% endif %}">
+                <span class="input-icon">
+                  {% if field.name == 'username' %}<i class="bi bi-at"></i>
+                  {% elif field.name == 'email' %}<i class="bi bi-envelope"></i>
+                  {% elif field.name == 'first_name' %}<i class="bi bi-person"></i>
+                  {% elif field.name == 'last_name' %}<i class="bi bi-person-badge"></i>
+                  {% elif 'password' in field.name %}<i class="bi bi-shield-lock"></i>
+                  {% elif field.name == 'phone' %}<i class="bi bi-phone"></i>
+                  {% else %}<i class="bi bi-input-cursor-text"></i>
+                  {% endif %}
+                </span>
+
+                <input
+                  type="{{ field.field.widget.input_type }}"
+                  name="{{ field.html_name }}"
+                  id="{{ field.id_for_label }}"
+                  class="auth-input"
+                  placeholder="{{ field.label }}"
+                  value="{{ field.value|default:'' }}"
+                  {% if field.field.required %}required{% endif %}
+                >
+
+                {% if 'password' in field.name %}
+                  <button type="button" class="toggle-pw" onclick="togglePassword('{{ field.id_for_label }}', this)" tabindex="-1">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                {% endif %}
+              </div>
+
               {% if field.help_text and field.name != 'password' %}
-                <small class="form-text text-muted">{{ field.help_text }}</small>
+                <p class="field-hint">{{ field.help_text|safe }}</p>
               {% endif %}
+
               {% if field.errors %}
-                <div class="invalid-feedback d-block">
+                <p class="field-error">
+                  <i class="bi bi-exclamation-circle me-1"></i>
                   {% for error in field.errors %}{{ error }}{% endfor %}
-                </div>
+                </p>
               {% endif %}
+
             </div>
           {% endfor %}
-
-          <button type="submit" class="btn btn-dark w-100 py-2 rounded-pill fw-bold mt-3">
-            {% trans "Create Account" %}
-          </button>
-        </form>
-
-        <div class="text-center mt-4">
-          <p class="text-muted mb-0">
-            {% trans "Already have an account?" %}
-            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
-              {% trans "Sign In" %}
-            </a>
-          </p>
         </div>
 
-        <hr class="my-4">
+        <button type="submit" class="submit-btn">
+          <span>{% trans "Create My Account" %}</span>
+          <span class="btn-icon"><i class="bi bi-arrow-right"></i></span>
+        </button>
 
-        <div class="text-center">
-          <a href="{% url 'home' %}" class="text-muted text-decoration-none small">
-            {% bs_icon 'house' size='1em' %} {% trans "Back to Home" %}
-          </a>
-        </div>
-      </div>
+      </form>
+
+      <p class="terms-note">
+        {% trans "By signing up, you agree to our" %}
+        <a href="#">{% trans "Terms of Service" %}</a> {% trans "and" %}
+        <a href="#">{% trans "Privacy Policy" %}</a>.
+      </p>
+
+      <div class="divider"><span>{% trans "Already a member?" %}</span></div>
+
+      <a href="{% url 'login' %}" class="signin-btn">
+        <i class="bi bi-box-arrow-in-right me-2"></i>
+        {% trans "Sign In to Your Account" %}
+      </a>
+
     </div>
   </div>
 </div>
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:       #10b981;
+  --accent-light: #d1fae5;
+  --accent-mid:   rgba(16,185,129,0.12);
+
+  --left-bg:      #0f172a;
+  --left-bg-2:    #1e293b;
+
+  --bg:           #f8fafc;
+  --white:        #ffffff;
+  --text-1:       #0f172a;
+  --text-2:       #475569;
+  --text-3:       #94a3b8;
+  --border:       #e2e8f0;
+  --border-2:     #cbd5e1;
+
+  --radius-sm:    10px;
+  --radius-md:    14px;
+
+  --font-head: 'Sora', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+body { font-family: var(--font-body); background: var(--bg); }
+
+/* ── Layout ─────────────────────────────────── */
+.auth-wrapper { display:flex; min-height:100vh; }
+
+/* ── Left Panel ──────────────────────────────── */
+.auth-left {
+  flex: 0 0 42%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--left-bg) 0%, var(--left-bg-2) 100%);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 3.5rem;
+}
+.glow-orb { position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; }
+.orb-1 { width:360px;height:360px;background:rgba(16,185,129,0.13);top:-100px;left:-100px; }
+.orb-2 { width:220px;height:220px;background:rgba(99,102,241,0.09);bottom:40px;right:-30px; }
+.grid-overlay {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.left-content { position:relative; z-index:2; width:100%; }
+
+.brand-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(16,185,129,0.15);
+  border:1px solid rgba(16,185,129,0.28);
+  color:#34d399;
+  font-family:var(--font-head); font-size:0.7rem; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  padding:5px 14px; border-radius:100px; margin-bottom:2.2rem;
+}
+.brand-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:#34d399; box-shadow:0 0 8px #34d399;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+.icon-ring {
+  width:72px;height:72px;border-radius:20px;
+  background:rgba(16,185,129,0.12);
+  border:1px solid rgba(16,185,129,0.25);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.8rem;
+  box-shadow:0 0 36px rgba(16,185,129,0.15);
+}
+.icon-ring .icon-main { color:#34d399 !important; }
+
+.left-title {
+  font-family:var(--font-head); font-size:2.3rem; font-weight:800;
+  color:#f0f9ff; line-height:1.15; letter-spacing:-0.03em; margin-bottom:1rem;
+}
+.left-sub { font-size:0.92rem; color:#94a3b8; line-height:1.75; margin-bottom:2.4rem; max-width:340px; }
+
+.perks-list { list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:2.6rem; }
+.perks-list li { display:flex; align-items:center; gap:12px; font-size:0.88rem; color:#cbd5e1; }
+.perk-icon {
+  width:32px;height:32px;border-radius:9px;
+  background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.22);
+  display:flex;align-items:center;justify-content:center;
+  color:#34d399;font-size:0.78rem;flex-shrink:0;
+}
+
+.trust-bar {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--radius-md);
+}
+.avatar-stack { display:flex; }
+.av {
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid #1e293b;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.62rem;font-weight:700;color:#fff;
+  margin-left:-8px;
+}
+.av:first-child { margin-left:0; }
+.trust-text { font-size:0.78rem; color:#94a3b8; }
+
+/* ── Right Panel ──────────────────────────────── */
+.auth-right {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  padding:2.5rem 1.5rem; background:var(--bg); overflow-y:auto;
+}
+.form-card { width:100%; max-width:460px; }
+
+.mobile-logo {
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-head);font-weight:700;font-size:1rem;
+  color:var(--text-1);margin-bottom:2rem;
+}
+
+.form-header { margin-bottom:1.8rem; }
+.form-title {
+  font-family:var(--font-head);font-size:2rem;font-weight:800;
+  color:var(--text-1);letter-spacing:-0.03em;margin-bottom:0.35rem;
+}
+.form-sub { font-size:0.88rem; color:var(--text-2); }
+
+/* ── Error Banner ─────────────────────────────── */
+.error-banner {
+  background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;
+  border-radius:var(--radius-sm);padding:12px 16px;
+  font-size:0.85rem;margin-bottom:1.4rem;
+}
+
+/* ── Fields ───────────────────────────────────── */
+.fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px; margin-bottom:1.5rem; }
+.field-wrap { grid-column:1 / -1; }
+.field-half { grid-column:span 1; }
+@media (max-width:480px) { .field-half { grid-column:1 / -1; } }
+
+.field-label {
+  display:block; font-size:0.73rem; font-weight:600;
+  color:var(--text-2); text-transform:uppercase;
+  letter-spacing:0.07em; margin-bottom:6px;
+}
+.req-star { color:var(--accent); margin-left:3px; }
+
+/* ── Input Shell ──────────────────────────────── */
+.input-shell {
+  display:flex;align-items:center;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.input-shell:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-mid); }
+.input-shell.has-error { border-color:#f87171; box-shadow:0 0 0 3px rgba(239,68,68,0.1); }
+
+.input-icon { padding:0 11px; color:var(--text-3); font-size:0.9rem; flex-shrink:0; transition:color 0.2s; }
+.input-shell:focus-within .input-icon { color:var(--accent); }
+
+.auth-input {
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text-1);font-family:var(--font-body);
+  font-size:0.88rem;padding:12px 10px 12px 0;
+}
+.auth-input::placeholder { color:var(--text-3); }
+
+.toggle-pw {
+  background:none;border:none;color:var(--text-3);
+  padding:0 11px;cursor:pointer;font-size:0.88rem;transition:color 0.2s;
+}
+.toggle-pw:hover { color:var(--text-1); }
+
+.field-hint { font-size:0.7rem; color:var(--text-3); margin-top:4px; line-height:1.5; }
+.field-error { font-size:0.76rem; color:#dc2626; margin-top:4px; }
+
+/* ── Submit ───────────────────────────────────── */
+.submit-btn {
+  width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+  background:var(--text-1); color:#fff; border:none;
+  border-radius:var(--radius-sm); padding:13px 24px;
+  font-family:var(--font-head); font-size:0.92rem; font-weight:700;
+  cursor:pointer; transition:all 0.22s; margin-bottom:1.3rem;
+  box-shadow:0 4px 14px rgba(15,23,42,0.15);
+}
+.submit-btn:hover { background:#1e293b; transform:translateY(-2px); box-shadow:0 8px 24px rgba(15,23,42,0.2); }
+.submit-btn:active { transform:scale(0.98); }
+.btn-icon {
+  width:24px;height:24px;background:rgba(255,255,255,0.15);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;
+}
+
+/* ── Footer ───────────────────────────────────── */
+.terms-note { text-align:center; font-size:0.77rem; color:var(--text-3); line-height:1.6; margin-bottom:1.3rem; }
+.terms-note a { color:var(--text-2); text-decoration:underline; text-underline-offset:2px; }
+.terms-note a:hover { color:var(--accent); }
+
+.divider { display:flex;align-items:center;gap:12px;color:var(--text-3);font-size:0.77rem;margin-bottom:1.1rem; }
+.divider::before,.divider::after { content:'';flex:1;height:1px;background:var(--border); }
+
+.signin-btn {
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:12px;
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text-1);
+  text-decoration:none;font-size:0.87rem;font-weight:500;transition:all 0.2s;
+}
+.signin-btn:hover { border-color:var(--border-2); background:var(--bg); color:var(--text-1); }
+</style>
+
+<script>
+function togglePassword(fieldId, btn) {
+  const input = document.getElementById(fieldId);
+  const icon  = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'bi bi-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'bi bi-eye';
+  }
+}
+</script>
+
 {% endblock %}

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from .forms import UserRegisterForm, ProfileUpdateForm, AddressForm
 from orders.models import Order
 from .models import Profile, Address
@@ -16,7 +16,7 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
+            auth_login(request, user)
             messages.success(
                 request, _("Welcome back! You have been logged in successfully.")
             )
@@ -35,7 +35,7 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            auth_login(request, user)
             messages.success(
                 request,
                 _("Account created successfully! Please complete your profile."),
@@ -50,7 +50,7 @@ def register(request):
 
 @login_required
 def profile(request):
-    profile_obj, _created = Profile.objects.get_or_create(user=request.user)
+    profile_obj, __ = Profile.objects.get_or_create(user=request.user)
     recent_orders = (
         Order.objects.filter(user=request.user)
         .prefetch_related("items__product")
@@ -61,9 +61,10 @@ def profile(request):
         form = ProfileUpdateForm(request.POST, request.FILES, instance=profile_obj)
         if form.is_valid():
             form.save()
-            request.user.first_name = form.cleaned_data.get("first_name", "")
-            request.user.last_name = form.cleaned_data.get("last_name", "")
-            request.user.save()
+            u = request.user
+            u.first_name = form.cleaned_data.get("first_name", "")
+            u.last_name = form.cleaned_data.get("last_name", "")
+            u.save()
             messages.success(request, _("Profile updated successfully!"))
             return redirect("profile")
         else:
@@ -88,7 +89,6 @@ def profile(request):
     )
 
 
-@csrf_exempt
 def checkout(request):
     return render(request, "pages/users/checkout.html")
 

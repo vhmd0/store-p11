@@ -70,7 +70,7 @@ async def product_list(request):
     def get_page_sync():
         p = paginator.get_page(request.GET.get("page", 1))
         # Evaluate object list
-        _ = list(p.object_list)
+        __ = list(p.object_list)
         return p
 
     page_obj = await sync_to_async(get_page_sync)()
@@ -164,11 +164,11 @@ async def product_detail(request, slug):
 
 @sync_to_async
 @login_required
-@require_POST
 def add_review(request, product_id):
     """Add or update a product review."""
+    from products.forms import ReviewForm as RF
     product = get_object_or_404(Product, id=product_id)
-    form = ReviewForm(request.POST)
+    form = RF(request.POST)
 
     if form.is_valid():
         review, created = Review.objects.update_or_create(
@@ -223,7 +223,7 @@ async def category_detail(request, slug):
 
     def get_page_sync():
         p = paginator.get_page(request.GET.get("page", 1))
-        _ = list(p.object_list)
+        __ = list(p.object_list)
         return p
 
     page_obj = await sync_to_async(get_page_sync)()

@@ -23,28 +23,91 @@
   <body>
     {% include 'components/navbar.html' %}
 
-    <main class="container mt-3">{% block content %} {% endblock %}</main>
+    <main class="container mt-3">
+        {# Django Messages (Cyberpunk Alerts) #}
+        {% if messages %}
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} s3r-alert animate slideIn" role="alert">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="alert-icon">
+                        {% if message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1 small fw-bold text-uppercase tracking-wider">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto shadow-none opacity-50" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% block content %} {% endblock %}
+    </main>
+
+    <style>
+        .s3r-alert {
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); margin-bottom: 2rem;
+        }
+        .alert-success { border-left: 4px solid #10b981 !important; }
+        .alert-error, .alert-danger { border-left: 4px solid #ef4444 !important; }
+        .alert-info, .alert-warning { border-left: 4px solid #3b82f6 !important; }
+        .alert-icon { font-size: 1.2rem; }
+        .alert-success .alert-icon { color: #10b981; }
+        .alert-error .alert-icon, .alert-danger .alert-icon { color: #ef4444; }
+        .tracking-wider { letter-spacing: 0.05em; }
+    </style>
 
     {# ── Cart Offcanvas ── #}
-    <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-      <div class="offcanvas-header border-bottom py-3 cart-offcanvas-header">
-        <h6 class="offcanvas-title fw-bold text-uppercase mb-0" id="cartOffcanvasLabel">
+    <div class="offcanvas offcanvas-end s3r-offcanvas cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+      <div class="offcanvas-header border-bottom border-secondary py-3">
+        <h6 class="offcanvas-title fw-black text-uppercase mb-0 text-white" id="cartOffcanvasLabel">
+          <i class="bi bi-terminal-plus text-accent me-2"></i>
           {% trans "Shopping Cart" %}
-          <span class="badge bg-dark rounded-pill ms-2 js-cart-badge">{{ cart_count }}</span>
+          <span class="badge bg-accent text-dark rounded-pill ms-2 js-cart-badge">{{ cart_count }}</span>
         </h6>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
 
       {# Scrollable items area #}
-      <div class="offcanvas-body px-3 py-0 js-cart-body cart-offcanvas-body">
+      <div class="offcanvas-body px-0 py-0 js-cart-body dark-scroll">
         {% include 'components/cart_items.html' %}
       </div>
 
       {# Pinned footer #}
-      <div class="border-top p-3 bg-white js-cart-footer">
+      <div class="border-top border-secondary p-3 js-cart-footer" style="background: rgba(15, 23, 42, 0.98);">
         {% include 'components/cart_footer.html' %}
       </div>
     </div>
+
+    <style>
+      .s3r-offcanvas {
+        background: #0f172a !important;
+        border-left: 1px solid rgba(16, 185, 129, 0.2);
+        color: #f8fafc;
+      }
+      .fw-black { font-weight: 900; }
+      .bg-accent { background: #10b981 !important; }
+      .text-accent { color: #10b981 !important; }
+      
+      /* Dark Scrollbar */
+      .dark-scroll::-webkit-scrollbar { width: 5px; }
+      .dark-scroll::-webkit-scrollbar-track { background: #0f172a; }
+      .dark-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      .dark-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+      .cart-offcanvas-header { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+    </style>
 
     {% include 'components/auth_modal.html' %}
 

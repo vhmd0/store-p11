@@ -28,7 +28,16 @@ SECRET_KEY = "django-insecure-8gf+0x-f6lr*))awq_+5w@ogaydvw0#hp2+1t(66yfi$*ql$oc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = ["*"]
+
+# Trust Cloudflare Tunnel for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://photos-imports-smaller-mailto.trycloudflare.com",
+]
+
+# Proxy Settings for Tunnels/Cloudflare
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition
@@ -82,7 +91,10 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "products.context_processors.menu_categories",
+                "products.context_processors.wishlist",
                 "cart.context_processors.cart",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
             ],
         },
     },

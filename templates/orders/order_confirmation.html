@@ -2,44 +2,234 @@
 {% load i18n %}
 {% load bootstrap_icons %}
 
-{% block title %}{% trans "Order Confirmation" %}{% endblock %}
+{% block title %}{% trans "Order Confirmed" %} — SMART S3R{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-5">
-    <div class="col-md-8 text-center">
-        <div class="mb-4 text-success">
-            <div class="bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 100px; height: 100px;">
-                <i class="bi bi-check-circle-fill" style="font-size: 4rem;"></i>
-            </div>
-        </div>
-        <h2 class="fw-bold mb-3">{% trans "Thank you for your order!" %}</h2>
-        <p class="text-muted mb-4 fs-5">{% trans "Your order has been placed successfully." %}</p>
-        
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 text-start mx-auto" style="max-width: 500px;">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                    <span class="fw-bold text-muted text-uppercase small">{% trans "Order ID:" %}</span>
-                    <span class="fw-bold">#{{ order.id }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                    <span class="fw-bold text-muted text-uppercase small">{% trans "Date:" %}</span>
-                    <span>{{ order.created_at|date:"d M Y, h:i A" }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                    <span class="fw-bold text-muted text-uppercase small">{% trans "Payment Method:" %}</span>
-                    <span>{% trans "Cash on Delivery" %}</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <span class="fw-bold text-muted text-uppercase small">{% trans "Total:" %}</span>
-                    <span class="fw-bold text-primary h5 mb-0">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-            <a href="{% url 'profile' %}" class="btn btn-outline-dark rounded-pill px-5 py-2 fw-bold">{% trans "View My Orders" %}</a>
-            <a href="{% url 'products:products' %}" class="btn btn-dark rounded-pill px-5 py-2 fw-bold">{% trans "Continue Shopping" %}</a>
-        </div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --accent:      #10b981;
+  --accent-mid:  rgba(16,185,129,0.12);
+  --accent-dim:  rgba(16,185,129,0.07);
+  --bg:          #f8fafc;
+  --white:       #ffffff;
+  --text-1:      #0f172a;
+  --text-2:      #475569;
+  --text-3:      #94a3b8;
+  --border:      #e2e8f0;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --font-head:   'Sora', sans-serif;
+  --font-body:   'DM Sans', sans-serif;
+}
+body { font-family: var(--font-body); background: var(--bg); }
+
+/* ── Confetti ring ─────────────────────────── */
+.success-ring {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  border: 3px solid #6ee7b7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.8rem; color: var(--accent);
+  margin: 0 auto 1.6rem;
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  box-shadow: 0 0 0 8px rgba(16,185,129,0.08), 0 0 0 16px rgba(16,185,129,0.04);
+}
+@keyframes popIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Header text ───────────────────────────── */
+.confirm-title {
+  font-family: var(--font-head); font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800; color: var(--text-1); letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.confirm-sub { font-size: 0.95rem; color: var(--text-2); margin-bottom: 2.4rem; }
+
+/* ── Order card ────────────────────────────── */
+.order-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 500px; margin: 0 auto 2.4rem;
+  text-align: left;
+}
+.order-card-head {
+  padding: 16px 22px;
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border-bottom: 1px solid rgba(16,185,129,0.15);
+  display: flex; align-items: center; gap: 10px;
+}
+.order-id-label {
+  font-size: 0.72rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.order-id-val {
+  font-family: var(--font-head); font-size: 1rem; font-weight: 800;
+  color: var(--accent);
+}
+.order-status {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  color: var(--accent); font-family: var(--font-head);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 3px 11px; border-radius: 100px;
+}
+.status-dot { width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+.order-body { padding: 0 22px; }
+.order-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.order-row:last-child { border-bottom: none; }
+.order-key {
+  font-size: 0.73rem; font-weight: 700; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.order-val { font-size: 0.88rem; color: var(--text-1); font-weight: 500; }
+.order-total {
+  font-family: var(--font-head); font-size: 1.15rem;
+  font-weight: 800; color: var(--text-1);
+}
+
+/* ── What's next ───────────────────────────── */
+.next-steps {
+  max-width: 500px; margin: 0 auto 2.4rem;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 22px;
+  text-align: left;
+}
+.next-title {
+  font-family: var(--font-head); font-size: 0.82rem; font-weight: 800;
+  color: var(--text-1); text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+.next-item {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
+}
+.next-item:last-child { margin-bottom: 0; }
+.next-icon {
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+}
+.ni-green  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(16,185,129,0.2); }
+.ni-blue   { background: rgba(99,102,241,0.08); color: #6366f1; border: 1px solid rgba(99,102,241,0.18); }
+.ni-amber  { background: rgba(245,158,11,0.08); color: #f59e0b; border: 1px solid rgba(245,158,11,0.18); }
+.next-text-title { font-family: var(--font-head); font-size: 0.82rem; font-weight: 700; color: var(--text-1); }
+.next-text-sub   { font-size: 0.75rem; color: var(--text-3); line-height: 1.5; }
+
+/* ── Buttons ───────────────────────────────── */
+.action-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+.btn-outline-orders {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--white); color: var(--text-1);
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  font-family: var(--font-head); font-size: 0.88rem; font-weight: 700;
+  text-decoration: none; transition: all 0.2s;
+}
+.btn-outline-orders:hover { border-color: var(--border-2); background: var(--bg); color: var(--text-1); }
+
+.btn-shop {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--text-1); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 12px 24px;
+  font-family: var(--font-head); font-size: 0.88rem; font-weight: 700;
+  text-decoration: none; transition: all 0.22s;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.15);
+}
+.btn-shop:hover { background: #1e293b; transform: translateY(-2px); color: #fff; box-shadow: 0 8px 24px rgba(15,23,42,0.2); }
+</style>
+
+
+<div class="py-5 text-center">
+
+  {# ── Success icon ── #}
+  <div class="success-ring"><i class="bi bi-check-lg"></i></div>
+
+  {# ── Title ── #}
+  <h1 class="confirm-title">{% trans "Order Confirmed!" %}</h1>
+  <p class="confirm-sub">{% trans "Thank you! Your order has been placed successfully." %}</p>
+
+  {# ── Order details card ── #}
+  <div class="order-card">
+    <div class="order-card-head">
+      <div>
+        <div class="order-id-label">{% trans "Order ID" %}</div>
+        <div class="order-id-val">#{{ order.id }}</div>
+      </div>
+      <div class="order-status">
+        <span class="status-dot"></span>
+        {% trans "Processing" %}
+      </div>
     </div>
+    <div class="order-body">
+      <div class="order-row">
+        <span class="order-key">{% trans "Date" %}</span>
+        <span class="order-val">{{ order.created_at|date:"d M Y, h:i A" }}</span>
+      </div>
+      <div class="order-row">
+        <span class="order-key">{% trans "Payment" %}</span>
+        <span class="order-val">
+          <i class="bi bi-truck me-1" style="color:var(--accent);"></i>
+          {% trans "Cash on Delivery" %}
+        </span>
+      </div>
+      <div class="order-row">
+        <span class="order-key">{% trans "Total" %}</span>
+        <span class="order-total">
+          {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {# ── What happens next ── #}
+  <div class="next-steps">
+    <div class="next-title">{% trans "What happens next?" %}</div>
+    <div class="next-item">
+      <div class="next-icon ni-green"><i class="bi bi-bell-fill"></i></div>
+      <div>
+        <div class="next-text-title">{% trans "Order Confirmation" %}</div>
+        <div class="next-text-sub">{% trans "You'll receive a confirmation notification shortly." %}</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-icon ni-blue"><i class="bi bi-box-seam-fill"></i></div>
+      <div>
+        <div class="next-text-title">{% trans "Preparing Your Order" %}</div>
+        <div class="next-text-sub">{% trans "We'll pack your items and get them ready for shipping." %}</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-icon ni-amber"><i class="bi bi-truck"></i></div>
+      <div>
+        <div class="next-text-title">{% trans "Out for Delivery" %}</div>
+        <div class="next-text-sub">{% trans "Our courier will deliver your order. Pay cash on arrival." %}</div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Action buttons ── #}
+  <div class="action-btns">
+    <a href="{% url 'profile' %}" class="btn-outline-orders">
+      <i class="bi bi-bag-check"></i> {% trans "View My Orders" %}
+    </a>
+    <a href="{% url 'products:products' %}" class="btn-shop">
+      <i class="bi bi-bag-heart-fill"></i> {% trans "Continue Shopping" %}
+    </a>
+  </div>
+
 </div>
+
 {% endblock %}

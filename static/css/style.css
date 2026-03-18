@@ -1,3 +1,4 @@
+/* ── 1. Reset & Base ── */
 *::before,
 *::after {
   box-sizing: border-box;
@@ -7,620 +8,186 @@
 
 body {
   scroll-behavior: smooth;
-}
-
-body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
-  color: #1a1a1a;
-  background: #fafafa;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1d1c1e;
+  background: #fefefbf2;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-
-.hero-image-container {
-  overflow: hidden;
-  background: #f0f0f0;
+/* ── 2. Header & Navbar Fix (المسافات والمنع من التداخل) ── */
+.navbar {
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #eee;
 }
 
-.hero-img {
-  width: 100%;
-  height: 480px;
-  object-fit: cover;
-}
-
-.hero-badge {
-  font-size: .7rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.hero-tagline {
-  color: #7dd3fc;
-}
-
-.hero-subtitle {
-  font-size: 1.05rem;
-  max-width: 420px;
-}
-
-
-.section-label {
-  font-size: .7rem;
-  letter-spacing: .1em;
-}
-
-
-.category-card {
-  transition: transform .25s ease, box-shadow .25s ease;
-  cursor: pointer;
-}
-
-.category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .12) !important;
-}
-
-.category-card img,
-.product-img {
-  transition: transform .35s ease;
-}
-
-.category-card:hover img {
-  transform: scale(1.06);
-}
-
-.category-name {
-  font-size: .85rem;
-}
-
-.product-card {
-  cursor: pointer;
-}
-
-.product-card:hover .product-img {
-  transform: scale(1.06);
-}
-
-.product-overlay {
-  background: rgba(0, 0, 0, .55);
-  padding: .6rem;
-  transform: translateY(100%);
-  transition: transform .3s ease;
-  z-index: 2;
-}
-
-.product-card:hover .product-overlay {
-  transform: translateY(0);
-}
-
-.product-brand {
-  font-size: .65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-
-.product-title {
-  font-size: .85rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-
-.newsletter-banner {
-  background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
-}
-
-/* Cart Offcanvas */
-.cart-offcanvas {
-  width: 380px;
-}
-
-.cart-offcanvas-header {
-  letter-spacing: .08em;
-  font-size: .8rem;
-}
-
-.cart-offcanvas-body {
-  overflow-y: auto;
-  flex: 1;
-}
-
-/* Navbar */
 .navbar-brand {
+  font-weight: 800;
   letter-spacing: -0.05em;
-  font-size: 1.25rem;
-  font-size: clamp(1rem, 4vw, 1.4rem);
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  flex-shrink: 0;
 }
 
 .nav-link-uppercase {
   font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  white-space: nowrap;
+  /* يمنع نزول النص لسطر جديد */
+  padding: 0.5rem 0.8rem !important;
 }
 
-.btn-join-us {
-  font-size: 0.65rem;
-}
-
+/* ضبط شريط البحث */
 .search-wrapper {
-  max-width: 700px;
-  position: relative;
+  max-width: 450px;
+  flex-grow: 1;
+  margin: 0 1.5rem;
 }
 
 .search-input {
-  box-shadow: none;
-  height: 100%;
-}
-
-[dir="ltr"] .search-input {
-  padding-right: 105px;
-}
-
-[dir="rtl"] .search-input {
-  padding-left: 105px;
-}
-
-.search-clear {
-  z-index: 5;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  transition: background 0.2s;
-}
-
-[dir="ltr"] .search-clear {
-  right: 68px;
-}
-
-[dir="rtl"] .search-clear {
-  left: 68px;
-}
-
-.search-clear {
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.search-clear:hover {
-  background-color: #f8f9fa;
-}
-
-.search-clear.btn-link:hover {
-  background-color: #f8f9fa;
-}
-
-.search-dropdown {
-  display: none;
-  max-height: 350px;
-  overflow-y: auto;
-  position: absolute;
-  z-index: 1050;
-  top: 100%;
-  left: 0;
-  right: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px 0 0 6px !important;
+  height: 40px;
+  font-size: 0.9rem;
 }
 
 .search-btn {
-  height: 100%;
-  min-width: 65px;
+  border-radius: 0 6px 6px 0 !important;
+  height: 40px;
+  min-width: 50px;
+  background: #212529;
+  color: #fff;
+  border: none;
 }
 
-.mobile-search-wrapper .search-input {
-  height: 100%;
-  font-size: 0.95rem;
-}
-
-[dir="ltr"] .mobile-search-wrapper .search-input {
-  padding-right: 90px;
-}
-
-[dir="rtl"] .mobile-search-wrapper .search-input {
-  padding-left: 90px;
-}
-
-.mobile-search-wrapper .search-clear {
-  width: 30px;
-  height: 30px;
-}
-
-[dir="ltr"] .mobile-search-wrapper .search-clear {
-  right: 54px;
-}
-
-[dir="rtl"] .mobile-search-wrapper .search-clear {
-  left: 54px;
-}
-
-.mobile-search-wrapper .search-dropdown {
-  max-height: 300px;
-}
-
-.mobile-search-input {
-  height: 42px;
-}
-
-.lang-dropdown {
-  min-width: auto;
-}
-
-.btn-language {
-  font-size: 0.7rem;
-}
-
-.btn-logout,
+/* أزرار الحساب والسلة */
 .btn-login,
-.btn-register-nav {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+.btn-register-nav,
+.btn-language {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.cart-badge {
-  font-size: 0.55rem;
-  min-width: 16px;
-  height: 16px;
-  line-height: 1;
+/* ── 3. Hero Banner (Responsive UX) ── */
+.hero-image-container {
+  overflow: hidden;
+  background: #f0f0f0;
+  width: 100%;
+  border-radius: 1rem;
 }
 
-.wishlist-badge {
-  font-size: 0.55rem;
-  min-width: 16px;
-  height: 16px;
-  line-height: 1;
-}
-
-.icon-lg {
-  font-size: 1.4rem;
-}
-
-.icon-xl {
-  font-size: 1.8rem;
-}
-
-.icon-xxl {
-  font-size: 1.3rem;
-}
-
-.mobile-nav-btn {
-  font-size: 1.8rem;
-}
-
-/* Product Detail Page */
-.product-detail-sticky {
-  top: 100px;
-}
-
-.product-img-cover {
+.hero-img {
+  width: 100%;
+  height: clamp(280px, 50vh, 480px);
+  /* يتكيف مع الموبايل والشاشة الكبيرة */
   object-fit: cover;
-  aspect-ratio: 1/1;
+  object-position: center;
 }
 
-.product-placeholder {
-  aspect-ratio: 1/1;
+/* ── 4. Categories & Product Cards ── */
+.category-card {
+  transition: transform .25s ease, box-shadow .25s ease;
+  border: none !important;
 }
 
-.out-of-stock-badge {
-  font-size: 0.7rem;
-  letter-spacing: 0.05em;
-}
-
-.product-brand-badge {
-  font-size: 0.7rem;
-  letter-spacing: 0.05em;
-}
-
-.product-description {
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-
-.quantity-input {
-  width: 130px;
-  height: 48px;
-  box-shadow: none;
-}
-
-.quantity-btn {
-  box-shadow: none;
-}
-
-.btn-add-cart {
-  height: 48px;
-  min-width: 180px;
-}
-
-.btn-wishlist {
-  width: 48px;
-  height: 48px;
-}
-
-.btn-add-cart-external {
-  height: 48px;
-}
-
-.detail-label {
-  width: 100px;
-}
-
-.share-label {
-  width: 80px;
-}
-
-.hover-primary:hover {
-  color: #0d6efd !important;
-}
-
-.transition-all {
-  transition: all 0.3s ease;
-}
-
-.nav-tabs-custom .nav-link {
-  letter-spacing: 0.1em;
-  font-size: 0.85rem;
-  color: #adb5bd;
-  border-bottom: 2px solid transparent !important;
-  transition: all 0.2s;
-}
-
-.nav-tabs-custom .nav-link:hover {
-  color: #212529;
-}
-
-.nav-tabs-custom .nav-link.active {
-  color: #212529 !important;
-  border-bottom-color: #212529 !important;
-}
-
-.tab-content-max {
-  max-width: 700px;
-}
-
-.specs-table th {
-  width: 30%;
-}
-
-.product-card-hover {
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-}
-
-.hover-lift:hover {
+.category-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .08) !important;
 }
 
-.product-card-hover:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Products Page */
-.category-link {
-  font-size: .8rem;
-}
-
-.category-header {
-  font-size: .7rem;
-  letter-spacing: .1em;
-}
-
-.product-sort-select {
-  min-width: 160px;
+.product-card {
+  transition: transform 0.3s ease;
+  border: none !important;
 }
 
 .product-image-wrapper {
   aspect-ratio: 1/1;
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa;
 }
 
-.product-overlay {
-  background: rgba(0, 0, 0, .55);
-  padding: .6rem;
-  transform: translateY(100%);
-  transition: transform .3s ease;
-  z-index: 2;
-}
-
-.product-card {
-  cursor: pointer;
-}
-
-.product-card .product-img {
+.product-img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  transition: transform .35s ease;
+  transition: transform .4s ease;
 }
 
 .product-card:hover .product-img {
   transform: scale(1.06);
 }
 
-.product-card:hover .product-overlay {
-  transform: translateY(0);
-}
-
-.product-brand-text {
-  font-size: .65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-
-.product-name-text {
+/* توحيد ارتفاع العناوين لشكل متناسق Grid */
+.product-title {
   font-size: .85rem;
+  font-weight: 600;
+  min-height: 2.6em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.3;
 }
 
-.auth-modal {
-  max-width: 420px;
+/* ── 5. Overlays (Hover vs Mobile) ── */
+.product-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+  padding: 1rem;
+  transform: translateY(100%);
+  transition: transform .3s ease;
 }
 
-/* Wishlist Page */
-.wishlist-card {
-  transition: all 0.3s ease;
+.product-card:hover .product-overlay {
+  transform: translateY(0);
 }
 
-.wishlist-image-wrapper {
-  aspect-ratio: 1/1;
+@media (max-width: 768px) {
+  .product-overlay {
+    transform: translateY(0);
+    background: transparent;
+    padding: 0.5rem 0;
+    position: relative;
+  }
+
+  .product-overlay .btn {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .search-wrapper {
+    margin: 0.5rem 0;
+    order: 3;
+    /* ينزل تحت في الموبايل لو احتجت */
+  }
 }
 
-.btn-wishlist-remove {
-  width: 38px;
-  height: 38px;
+/* ── 6. Newsletter & Sections ── */
+.newsletter-banner {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+  border-radius: 1rem;
 }
 
-.empty-wishlist-icon {
-  width: 100px;
-  height: 100px;
-}
-
-/* Cart Detail */
-.cart-item-image {
-  width: 80px;
-  height: 80px;
-}
-
-.cart-item-name {
-  font-size: .85rem;
-}
-
-.cart-qty-btn {
-  width: 26px;
-  height: 26px;
-  font-size: .85rem;
-}
-
-.cart-item-price {
-  font-size: .85rem;
-}
-
-.cart-remove-btn {
+.section-label {
   font-size: .7rem;
-}
-
-/* Cart Items Component */
-.cart-item-img {
-  width: 64px;
-  height: 64px;
-}
-
-.cart-item-title {
-  font-size: .82rem;
-}
-
-.cart-qty-circle {
-  width: 26px;
-  height: 26px;
-  font-size: .85rem;
-}
-
-.cart-footer-subtotal {
-  font-size: .7rem;
+  font-weight: 700;
   letter-spacing: .1em;
+  color: #6c757d;
+  text-transform: uppercase;
 }
 
-.cart-footer-btn {
-  font-size: .72rem;
-  letter-spacing: .08em;
-}
-
-.cart-footer-checkout {
-  background: #2e7d32;
-}
-
-/* Login Page */
-.login-brand-panel {
-  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  min-height: 500px;
-}
-
-.login-blob-1 {
-  width: 280px;
-  height: 280px;
-  background: rgba(255, 255, 255, .04);
-  top: 10%;
-  left: -60px;
-}
-
-.login-blob-2 {
-  width: 200px;
-  height: 200px;
-  background: rgba(99, 179, 237, .08);
-  bottom: 10%;
-  right: -40px;
-}
-
-.login-features {
-  font-size: .82rem;
-}
-
-.login-header-label {
-  font-size: .7rem;
-  letter-spacing: .1em;
-}
-
-.login-form-width {
-  max-width: 400px;
-}
-
-.login-error {
-  font-size: .85rem;
-}
-
-.login-divider {
-  font-size: .75rem;
-}
-
-.login-remember {
-  font-size: .85rem;
-}
-
-.login-submit-btn {
-  font-size: .85rem;
-}
-
-.login-register-link {
-  font-size: .85rem;
-}
-
-/* About Page */
-.about-hero {
-  background-size: cover;
-  background-position: center;
-}
-
-/* About Page */
-.about-hero {
-  background-image: url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-  background-size: cover;
-  background-position: center;
-}
-
-/* General */
-.leading-relaxed {
-  line-height: 1.6;
-}
-
-.max-w-700 {
-  max-width: 700px;
-}
-
-.fw-black {
-  font-weight: 800;
-}
-
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
+/* ── 7. Global Utils ── */
 .hover-lift:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
 .backdrop-blur {
@@ -628,28 +195,47 @@ body {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.z-2 {
-  z-index: 2;
+/* تحسين السكرول بار */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.05); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 0.5; }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-.pulse-animation {
-  animation: pulse 3s infinite ease-in-out;
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
 }
 
-.banner-image-wrapper {
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* تحسين شكل الـ Tabs لتكون أنعم */
+.nav-tabs-custom .nav-link {
+  color: #6c757d;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent !important;
 }
 
-.carousel-item.active .banner-image-wrapper {
-  transform: scale(1) rotate(0deg);
+.nav-tabs-custom .nav-link.active {
+  color: #000 !important;
+  border-bottom: 2px solid #000 !important;
 }
 
-.carousel-item .banner-image-wrapper {
-  transform: scale(0.9) rotate(-2deg);
+/* تحسين شكل جدول المواصفات */
+.specs-table {
+  background-color: #f8f9fa;
+  width: 30%;
+}
+
+/* تحسين شكل زر الـ Wishlist الدائري */
+.btn-wishlist {
+  width: 45px;
+  height: 45px;
+  transition: all 0.3s ease;
+}
+
+.btn-wishlist:hover {
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+  color: #842029;
 }
