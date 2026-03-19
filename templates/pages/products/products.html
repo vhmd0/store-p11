@@ -1,6 +1,7 @@
 {% extends 'pages/shared/base.html' %}
 {% load i18n %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 {% block title %}{% trans "Store" %} — SMART S3R{% endblock %}
 
@@ -315,7 +316,7 @@ body { font-family: var(--font-body); background: var(--bg); }
               <div class="prod-name">{{ product.name }}</div>
             </a>
             <div class="prod-price">
-              <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span>{{ product.price }}
+              <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span> {{ product.price|floatformat:2|intcomma }}
             </div>
           </div>
 

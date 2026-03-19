@@ -8,6 +8,7 @@ from products.views import (
     wishlist_list,
     toggle_wishlist,
     add_review,
+    delete_review,
 )
 
 app_name = "products"
@@ -17,6 +18,7 @@ urlpatterns = [
     path("wishlist/", wishlist_list, name="wishlist_list"),
     path("wishlist/toggle/<int:product_id>/", toggle_wishlist, name="toggle_wishlist"),
     path("review/add/<int:product_id>/", add_review, name="add_review"),
+    path("review/delete/<int:review_id>/", delete_review, name="delete_review"),
     path("<slug:slug>/", product_detail, name="detail"),
 ]
 

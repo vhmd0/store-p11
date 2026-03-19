@@ -13,6 +13,8 @@ dependencies = [
     "django-jazzmin==3.0.4",
     "django-spa>=0.3.6",
     "django-triggers>=2.1.5",
+    "humanize>=4.15.0",
+    "mysqlclient>=2.2.8",
     "nox>=2026.2.9",
     "pillow>=12.1.1",
     "ruff>=0.15.6",

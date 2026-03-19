@@ -1,5 +1,6 @@
 {% extends 'pages/shared/base.html' %}
 {% load i18n %}
+{% load humanize %}
 {% load bootstrap_icons %}
 
 {% block title %}SMART S3R — {% trans "Home" %}{% endblock %}
@@ -494,7 +495,69 @@ body { font-family: var(--font-body); background: var(--bg); }
             <div class="prod-name">{{ product.name }}</div>
           </a>
           <div class="prod-price">
-            <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span>{{ product.price }}
+            <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span> {{ product.price|floatformat:2|intcomma }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+{# ── Most Liked Products ───────────────────────── #}
+{% if most_liked_products %}
+<div class="products-section">
+  <div class="d-flex align-items-end justify-content-between mb-4">
+    <div>
+      <div class="sec-badge"><i class="bi bi-heart-fill"></i> {% trans "Trending" %}</div>
+      <h2 class="sec-title">{% trans "Most Liked Products" %}</h2>
+    </div>
+    <a href="{% url 'products:wishlist_list' %}" class="sec-link">
+      {% trans "My Wishlist" %} <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+    {% for product in most_liked_products %}
+    <div class="col d-flex">
+      <div class="prod-card w-100">
+        <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+          <div class="prod-img-wrap">
+            {% if product.img %}
+              <img src="{{ product.img.url }}" alt="{{ product.name }}">
+            {% elif product.img_link %}
+              <img src="{{ product.img_link }}" alt="{{ product.name }}">
+            {% else %}
+              <div class="prod-placeholder"><i class="bi bi-phone"></i></div>
+            {% endif %}
+
+            <div class="prod-overlay">
+              {% if user.is_authenticated %}
+                <form action="{% url 'cart:add' product.id %}" method="post" class="js-cart-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="add-btn">
+                    <i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}
+                  </button>
+                </form>
+              {% else %}
+                <button type="button" class="add-btn" data-bs-toggle="modal" data-bs-target="#authModal">
+                  <i class="bi bi-cart-plus"></i> {% trans "Add to Cart" %}
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+
+        <div class="prod-body">
+          <div class="prod-brand">{{ product.brand.name }}</div>
+          <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
+            <div class="prod-name">{{ product.name }}</div>
+          </a>
+          <div class="prod-price">
+            <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span> {{ product.price|floatformat:2|intcomma }}
           </div>
         </div>
       </div>

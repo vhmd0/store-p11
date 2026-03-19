@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 {% if cart_items %}
   <div class="cart-items-container px-3">
@@ -43,7 +44,7 @@
         {# Price Tag #}
         <div class="mb-2">
             <span class="fw-black text-accent" style="font-size: 0.85rem;">
-                {{ item.subtotal }} <small class="text-white-50 fw-bold" style="font-size: 0.7rem;">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</small>
+                {{ item.subtotal|floatformat:2|intcomma }} <small class="text-white-50 fw-bold" style="font-size: 0.7rem;">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</small>
             </span>
         </div>
 

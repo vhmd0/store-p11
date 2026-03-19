@@ -66,14 +66,18 @@ def checkout(request):
     )
     default_address = addresses.filter(is_default=True).first()
 
-    default_phone = default_address.phone if default_address else ""
-    default_shipping = ""
-    if default_address:
+    saved_checkout = request.session.get("checkout_data", {})
+    default_phone = saved_checkout.get("phone") or (
+        default_address.phone if default_address else ""
+    )
+    default_shipping = saved_checkout.get("shipping_address") or ""
+    if default_address and not default_shipping:
         default_shipping = (
             f"{default_address.address}, {default_address.area}, {default_address.city}"
             if default_address.area
             else f"{default_address.address}, {default_address.city}"
         )
+    default_notes = saved_checkout.get("notes", "")
 
     return render(
         request,
@@ -83,12 +87,14 @@ def checkout(request):
             "total": total,
             "default_phone": default_phone,
             "default_address": default_shipping,
+            "default_notes": default_notes,
             "addresses": addresses,
         },
     )
 
 
 from django.db import transaction
+
 
 @login_required
 def create_order(request):
@@ -106,6 +112,12 @@ def create_order(request):
     phone = request.POST.get("phone", "").strip()
     notes = request.POST.get("notes", "").strip()
 
+    request.session["checkout_data"] = {
+        "phone": phone,
+        "shipping_address": shipping_address,
+        "notes": notes,
+    }
+
     if not shipping_address or not phone:
         messages.error(request, "Please provide shipping address and phone number.")
         return redirect("orders:checkout")
@@ -116,14 +128,17 @@ def create_order(request):
             for item in products:
                 product = item["product"]
                 requested_qty = item["quantity"]
-                
+
                 # Refetch product within transaction to lock the row
                 p = Product.objects.select_for_update().get(id=product.id)
-                
+
                 if p.stock < requested_qty:
-                    messages.error(request, f"Sorry, {p.name} is out of stock or does not have enough quantity (Available: {p.stock}).")
+                    messages.error(
+                        request,
+                        f"Sorry, {p.name} is out of stock or does not have enough quantity (Available: {p.stock}).",
+                    )
                     return redirect("orders:checkout")
-                
+
                 # Reduce stock
                 p.stock -= requested_qty
                 p.save(update_fields=["stock"])
@@ -155,13 +170,19 @@ def create_order(request):
 
             # Clear the cart
             save_cart(request, {})
-            
+
+            # Clear checkout data from session
+            if "checkout_data" in request.session:
+                del request.session["checkout_data"]
+
             messages.success(request, "Your order has been placed successfully!")
             return redirect("orders:confirmation", order_id=order.id)
-            
+
     except Exception as e:
         # If anything fails (like a database error), the transaction rolls back
-        messages.error(request, f"An error occurred while processing your order: {str(e)}")
+        messages.error(
+            request, f"An error occurred while processing your order: {str(e)}"
+        )
         return redirect("orders:checkout")
 
 
@@ -216,14 +237,25 @@ def order_detail(request, order_id):
 @transaction.atomic
 def cancel_order(request, order_id):
     """Cancel order and restore product stock."""
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(
+        Order.objects.prefetch_related("items__product"),
+        id=order_id,
+        user=request.user,
+    )
 
-    if order.status in [OrderStatus.CANCELLED, OrderStatus.DELIVERED, OrderStatus.SHIPPED]:
-        messages.error(request, f"Order cannot be cancelled in its current status: {order.get_status_display()}.")
+    if order.status in [
+        OrderStatus.CANCELLED,
+        OrderStatus.DELIVERED,
+        OrderStatus.SHIPPED,
+    ]:
+        messages.error(
+            request,
+            f"Order cannot be cancelled in its current status: {order.get_status_display()}.",
+        )
         return redirect("orders:order_detail", order_id=order.id)
 
-    # Restore stock for each item
-    for item in order.items.select_related("product"):
+    # Restore stock for each item (product already prefetched)
+    for item in order.items.all():
         product = item.product
         product.stock += item.quantity
         product.save(update_fields=["stock"])
@@ -231,5 +263,7 @@ def cancel_order(request, order_id):
     order.status = OrderStatus.CANCELLED
     order.save(update_fields=["status"])
 
-    messages.success(request, f"Order #{order.id} has been cancelled and stock restored.")
+    messages.success(
+        request, f"Order #{order.id} has been cancelled and stock restored."
+    )
     return redirect("orders:order_detail", order_id=order.id)

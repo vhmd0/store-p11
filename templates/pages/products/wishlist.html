@@ -1,6 +1,7 @@
 {% extends 'pages/shared/base.html' %}
 {% load i18n %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 {% block title %}{% trans "My Wishlist" %} — SMART S3R{% endblock %}
 
@@ -230,7 +231,7 @@ body { font-family: var(--font-body); background: var(--bg); }
           <a href="{{ item.product.get_absolute_url }}" class="wish-name">{{ item.product.name }}</a>
           <div class="wish-footer">
             <div class="wish-price">
-              <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span>{{ item.product.price }}
+              <span>{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %}</span> {{ item.product.price|floatformat:2|intcomma }}
             </div>
             <form action="{% url 'cart:add' item.product.id %}" method="post" class="js-cart-form">
               {% csrf_token %}

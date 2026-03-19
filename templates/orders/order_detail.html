@@ -1,6 +1,7 @@
 {% extends 'pages/shared/base.html' %}
 {% load i18n %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 {% block title %}{% trans "Order" %} #{{ order.id }} — SMART S3R{% endblock %}
 
@@ -220,11 +221,11 @@ body { font-family: var(--font-body); background: var(--bg); }
           <div class="item-info">
             <div class="item-name">{{ item.product.name }}</div>
             <div class="item-qty">
-              {{ item.quantity }} × {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.price }}
+              {{ item.quantity }} × {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.price|floatformat:2|intcomma }}
             </div>
           </div>
           <div class="item-sub">
-            {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.subtotal }}
+            {% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ item.subtotal|floatformat:2|intcomma }}
           </div>
         </div>
         {% endfor %}
@@ -232,7 +233,7 @@ body { font-family: var(--font-body); background: var(--bg); }
         <div class="totals-wrap mt-3">
           <div class="total-row">
             <span class="total-key">{% trans "Subtotal" %}</span>
-            <span class="total-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
+            <span class="total-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount|floatformat:2|intcomma }}</span>
           </div>
           <div class="total-row">
             <span class="total-key">{% trans "Shipping" %}</span>
@@ -240,7 +241,7 @@ body { font-family: var(--font-body); background: var(--bg); }
           </div>
           <div class="total-final-row">
             <span class="total-final-key">{% trans "Total" %}</span>
-            <span class="total-final-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount }}</span>
+            <span class="total-final-val">{% if request.LANGUAGE_CODE == 'ar' %}ج.م{% else %}EGP{% endif %} {{ order.total_amount|floatformat:2|intcomma }}</span>
           </div>
         </div>
       </div>
