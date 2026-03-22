@@ -24,6 +24,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
       - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
     expose:
       - "8000"
     volumes:
@@ -57,6 +58,7 @@ services:
       - DEBUG=False
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/www/media

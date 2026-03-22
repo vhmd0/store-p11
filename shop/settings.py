@@ -68,7 +68,6 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "shop.middleware.LanguageDirectionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -179,7 +178,6 @@ LOGIN_URL = "/login/"
 LANGUAGE_CODE = "en-us"
 LANGUAGES = [
     ("en", _("English")),
-    ("ar", _("Arabic")),
 ]
 TIME_ZONE = "EET"
 

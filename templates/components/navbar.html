@@ -52,33 +52,7 @@
 
       <div class="nav-sep"></div>
 
-      {# Language #}
-      <div class="dropdown">
-        <a href="#" class="nav-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" title="{% trans 'Language' %}">
-          <i class="bi bi-translate"></i>
-          <span class="lang-code">{{ request.LANGUAGE_CODE|slice:":2"|upper }}</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-xl dark-dropdown mt-2 p-1">
-          <li>
-            <form action="{% url 'set_language' %}" method="post" class="m-0">
-              {% csrf_token %}
-              <input name="next" type="hidden" value="{{ request.get_full_path }}">
-              <button type="submit" name="language" value="ar" class="dropdown-item rounded-3 py-2 text-white px-3 w-100 text-start {% if request.LANGUAGE_CODE|slice:':2' == 'ar' %}active-lang{% endif %}">
-                <span class="font-mono small">العربية (AR)</span>
-              </button>
-            </form>
-          </li>
-          <li>
-            <form action="{% url 'set_language' %}" method="post" class="m-0">
-              {% csrf_token %}
-              <input name="next" type="hidden" value="{{ request.get_full_path }}">
-              <button type="submit" name="language" value="en" class="dropdown-item rounded-3 py-2 text-white px-3 w-100 text-start {% if request.LANGUAGE_CODE|slice:':2' == 'en' %}active-lang{% endif %}">
-                <span class="font-mono small">English (EN)</span>
-              </button>
-            </form>
-          </li>
-        </ul>
-      </div>
+
 
       {# Wishlist #}
       <a href="{% url 'wishlist' %}" class="nav-icon-btn position-relative" title="{% trans 'Wishlist' %}">
