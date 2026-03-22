@@ -54,7 +54,7 @@ async def cart_detail(request):
     ctx["products"] = ctx["cart_items"]
     ctx["total"] = ctx["cart_total"]
     # render is synchronous, need sync_to_async
-    return await sync_to_async(render)(request, "cart/cart_detail.html", ctx)
+    return await sync_to_async(render)(request, "pages/cart/cart_detail.html", ctx)
 
 
 @sync_to_async

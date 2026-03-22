@@ -145,7 +145,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR.parent / "db.sqlite3",
     }
 }
 
@@ -201,7 +201,7 @@ STATICFILES_DIRS = [
 
 # Media files (User uploads)
 MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "www" / "media"
+MEDIA_ROOT = BASE_DIR.parent / "www" / "media"
 
 # Jazzmin Admin Configuration
 JAZZMIN_SETTINGS = {

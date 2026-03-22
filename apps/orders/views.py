@@ -81,7 +81,7 @@ def checkout(request):
 
     return render(
         request,
-        "orders/checkout.html",
+        "pages/orders/checkout.html",
         {
             "products": products,
             "total": total,
@@ -205,7 +205,7 @@ def order_confirmation(request, order_id):
     )
     return render(
         request,
-        "orders/order_confirmation.html",
+        "pages/orders/order_confirmation.html",
         {
             "order": order,
             "items": order.items.all(),  # uses the already-prefetched cache
@@ -221,7 +221,7 @@ def order_list(request):
         .prefetch_related("items__product")
         .only("id", "status", "total_amount", "created_at", "payment_status")
     )
-    return render(request, "orders/order_list.html", {"orders": orders})
+    return render(request, "pages/orders/order_list.html", {"orders": orders})
 
 
 @login_required
@@ -234,7 +234,7 @@ def order_detail(request, order_id):
     )
     return render(
         request,
-        "orders/order_detail.html",
+        "pages/orders/order_detail.html",
         {
             "order": order,
             "items": order.items.all(),  # uses the already-prefetched cache
