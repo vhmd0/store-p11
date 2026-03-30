@@ -20,7 +20,11 @@ def wishlist(request):
     count = 0
     if request.user.is_authenticated:
         try:
-            count = Wishlist.objects.filter(user=request.user.profile).count()
+            cache_key = f"wishlist_count_{request.user.id}"
+            count = cache.get(cache_key)
+            if count is None:
+                count = Wishlist.objects.filter(user=request.user.profile).count()
+                cache.set(cache_key, count, 300)  # 5 min cache
         except Exception:
             pass
     return {"wishlist_count": count}

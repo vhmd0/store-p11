@@ -1,9 +1,24 @@
 from django.core.cache import cache
 from django.shortcuts import render
 from django.db.models import Count
-
+from django.views.decorators.http import require_POST
 from products.models import Category, Product
 from .models import Banner
+from django.urls import translate_url
+from django.http import HttpResponseRedirect
+from django.conf import settings
+
+
+@require_POST
+def set_language_custom(request):
+    next_url = request.POST.get("next", "/")
+    lang_code = request.POST.get("language")
+    # Translate the URL to the new language (adds/removes prefix)
+    translated_url = translate_url(next_url, lang_code)
+    response = HttpResponseRedirect(translated_url)
+    # Optional: set the language cookie for consistency
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+    return response
 
 
 def home(request):
@@ -53,6 +68,7 @@ def home(request):
 
     # Banners
     banners = cache.get("home_banners")
+    # If here is no Caching make caching
     if banners is None:
         banners = list(Banner.objects.filter(is_active=True))
         cache.set("home_banners", banners, 3600)
@@ -64,13 +80,3 @@ def home(request):
         "banners": banners,
     }
     return render(request, "pages/home.html", context)
-
-
-def about(request):
-    context = {
-        "title": "About",
-        "description": "About Us",
-        "keywords": "About Us",
-        "author": "About Us",
-    }
-    return render(request, "pages/about/about.html", context)

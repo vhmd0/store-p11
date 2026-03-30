@@ -5,27 +5,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0003_address'),
+        ("users", "0003_address"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='address',
-            options={'verbose_name_plural': 'Addresses'},
+            name="address",
+            options={"verbose_name_plural": "Addresses"},
         ),
         migrations.AddIndex(
-            model_name='address',
-            index=models.Index(fields=['user', 'is_default'], name='addr_user_def_idx'),
+            model_name="address",
+            index=models.Index(fields=["user", "is_default"], name="addr_user_def_idx"),
         ),
         migrations.AddIndex(
-            model_name='address',
-            index=models.Index(fields=['created_at'], name='addr_created_idx'),
+            model_name="address",
+            index=models.Index(fields=["created_at"], name="addr_created_idx"),
         ),
         migrations.AddIndex(
-            model_name='profile',
-            index=models.Index(fields=['user'], name='profile_user_idx'),
+            model_name="profile",
+            index=models.Index(fields=["user"], name="profile_user_idx"),
         ),
     ]

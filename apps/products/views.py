@@ -300,10 +300,15 @@ def toggle_wishlist(request, product_id):
     else:
         action = "added"
 
+    # Invalidate cached wishlist count
+    cache.delete(f"wishlist_count_{request.user.id}")
+
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         from .models import Wishlist as WL
 
         count = WL.objects.filter(user=request.user.profile).count()
+        # Update cache with fresh count
+        cache.set(f"wishlist_count_{request.user.id}", count, 300)
         return JsonResponse(
             {"status": "success", "action": action, "wishlist_count": count}
         )

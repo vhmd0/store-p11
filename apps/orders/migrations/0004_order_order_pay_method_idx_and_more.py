@@ -5,19 +5,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('orders', '0003_order_order_user_created_idx_order_order_status_idx_and_more'),
+        ("orders", "0003_order_order_user_created_idx_order_order_status_idx_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='order',
-            index=models.Index(fields=['payment_method'], name='order_pay_method_idx'),
+            model_name="order",
+            index=models.Index(fields=["payment_method"], name="order_pay_method_idx"),
         ),
         migrations.AddIndex(
-            model_name='order',
-            index=models.Index(fields=['payment_status'], name='order_pay_status_idx'),
+            model_name="order",
+            index=models.Index(fields=["payment_status"], name="order_pay_status_idx"),
         ),
     ]

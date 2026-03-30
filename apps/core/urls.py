@@ -21,12 +21,13 @@ urlpatterns = [
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
+    path("set-language/", views.set_language_custom, name="set_language_custom"),
 ]
 
 urlpatterns += i18n_patterns(
     path("admin/", admin.site.urls),
     path("", views.home, name="home"),
-    path("about/", views.about, name="about"),
+    # path("about/", views.about, name="about"),
     path("search/", products_views.product_list, name="search"),
     path(
         "products/",
@@ -44,8 +45,16 @@ urlpatterns += i18n_patterns(
     path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
     path("profile/", users_views.profile, name="profile"),
     path("users/", include("users.urls", namespace="users")),
-    prefix_default_language=False,
+    prefix_default_language=True,
 )
+
+# Add debug toolbar URLs only in development
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
