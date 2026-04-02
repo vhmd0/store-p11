@@ -43,7 +43,7 @@ if (starRating) {
   });
   
   starRating.addEventListener('mouseleave', () => {
-    updateStars(initialRating);
+    updateStars(parseInt(ratingInput.value) || 0);
   });
   
   function updateStars(rating) {

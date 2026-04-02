@@ -309,8 +309,8 @@
             <label class="form-label small fw-semibold">{% trans "Your Rating" %}</label>
             <div class="d-flex gap-1" id="starRating">
               {% for i in "12345" %}
-              <button type="button" class="btn btn-link p-0 text-warning fs-5" data-value="{{ forloop.counter }}">
-                <i class="bi bi-star{% if user_review and forloop.counter <= user_review.rating %}-fill{% endif %}"></i>
+              <button type="button" class="star-btn btn btn-link p-0 text-warning fs-5" data-value="{{ forloop.counter }}">
+                <i class="bi bi-star"></i>
               </button>
               {% endfor %}
             </div>
