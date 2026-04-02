@@ -1,0 +1,66 @@
+[
+  {
+    "model": "orders.Order",
+    "pk": 1,
+    "fields": {
+      "user_id": 1,
+      "status": "delivered",
+      "payment_method": "cash_on_delivery",
+      "payment_status": "paid",
+      "total_amount": "65498",
+      "shipping_address": "15 Mohamed Naguib St., Apt 5, Downtown, Cairo",
+      "phone": "01012345678",
+      "notes": "Please deliver after 5 PM",
+      "created_at": "2025-01-05 14:00:00",
+      "updated_at": "2025-01-10 16:00:00"
+    }
+  },
+  {
+    "model": "orders.Order",
+    "pk": 2,
+    "fields": {
+      "user_id": 1,
+      "status": "shipped",
+      "payment_method": "cash_on_delivery",
+      "payment_status": "paid",
+      "total_amount": "72998",
+      "shipping_address": "20 Tahrir St., Business Tower, Floor 10, Cairo",
+      "phone": "01012345679",
+      "notes": "",
+      "created_at": "2025-01-12 10:00:00",
+      "updated_at": "2025-01-15 08:00:00"
+    }
+  },
+  {
+    "model": "orders.Order",
+    "pk": 3,
+    "fields": {
+      "user_id": 2,
+      "status": "processing",
+      "payment_method": "cash_on_delivery",
+      "payment_status": "pending",
+      "total_amount": "33998",
+      "shipping_address": "42 Ahmed Zewail St., Villa 3, Maadi, Cairo",
+      "phone": "01098765432",
+      "notes": "Call before delivery",
+      "created_at": "2025-01-13 11:00:00",
+      "updated_at": "2025-01-15 12:00:00"
+    }
+  },
+  {
+    "model": "orders.Order",
+    "pk": 4,
+    "fields": {
+      "user_id": 3,
+      "status": "pending",
+      "payment_method": "cash_on_delivery",
+      "payment_status": "pending",
+      "total_amount": "89999",
+      "shipping_address": "8 El-Messaha St., Building B, Dokki, Giza",
+      "phone": "01123456789",
+      "notes": "",
+      "created_at": "2025-01-14 09:00:00",
+      "updated_at": "2025-01-14 09:00:00"
+    }
+  }
+]

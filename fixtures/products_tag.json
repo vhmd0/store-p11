@@ -1,0 +1,92 @@
+[
+  {
+    "model": "products.Tag",
+    "pk": 1,
+    "fields": {
+      "name": "New",
+      "name_ar": "جديد",
+      "slug": "new"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 2,
+    "fields": {
+      "name": "Bestseller",
+      "name_ar": "الأكثر مبيعاً",
+      "slug": "bestseller"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 3,
+    "fields": {
+      "name": "Sale",
+      "name_ar": "تخفيضات",
+      "slug": "sale"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 4,
+    "fields": {
+      "name": "5G",
+      "name_ar": "5 جي",
+      "slug": "5g"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 5,
+    "fields": {
+      "name": "Flagship",
+      "name_ar": "رائد",
+      "slug": "flagship"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 6,
+    "fields": {
+      "name": "Budget",
+      "name_ar": "اقتصادي",
+      "slug": "budget"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 7,
+    "fields": {
+      "name": "Premium",
+      "name_ar": "مميز",
+      "slug": "premium"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 8,
+    "fields": {
+      "name": "Gaming",
+      "name_ar": "ألعاب",
+      "slug": "gaming"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 9,
+    "fields": {
+      "name": "Pro",
+      "name_ar": "برو",
+      "slug": "pro"
+    }
+  },
+  {
+    "model": "products.Tag",
+    "pk": 10,
+    "fields": {
+      "name": "Limited Edition",
+      "name_ar": "إصدار محدود",
+      "slug": "limited-edition"
+    }
+  }
+]

@@ -4,16 +4,17 @@ from .models import Category, Wishlist
 
 def menu_categories(request):
     categories = cache.get("menu_categories")
+    has_more = cache.get("has_more_categories")
+
     if categories is None:
-        categories = list(Category.objects.all()[:10])
+        # Fetch all categories in one query, derive count from Python — no second COUNT(*)
+        all_cats = list(Category.objects.only("id", "name", "name_ar", "slug").all())
+        has_more = len(all_cats) > 10
+        categories = all_cats[:10]
         cache.set("menu_categories", categories, 3600)
+        cache.set("has_more_categories", has_more, 3600)
 
-    count = cache.get("category_count")
-    if count is None:
-        count = Category.objects.count()
-        cache.set("category_count", count, 3600)
-
-    return {"menu_categories": categories, "has_more_categories": count > 10}
+    return {"menu_categories": categories, "has_more_categories": has_more}
 
 
 def wishlist(request):

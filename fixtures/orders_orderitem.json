@@ -1,0 +1,92 @@
+[
+  {
+    "model": "orders.OrderItem",
+    "pk": 1,
+    "fields": {
+      "order_id": 1,
+      "product_id": 21,
+      "quantity": 1,
+      "price": "119999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 2,
+    "fields": {
+      "order_id": 1,
+      "product_id": 46,
+      "quantity": 1,
+      "price": "15999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 3,
+    "fields": {
+      "order_id": 1,
+      "product_id": 81,
+      "quantity": 2,
+      "price": "2499"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 4,
+    "fields": {
+      "order_id": 2,
+      "product_id": 4,
+      "quantity": 1,
+      "price": "57999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 5,
+    "fields": {
+      "order_id": 2,
+      "product_id": 41,
+      "quantity": 1,
+      "price": "9999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 6,
+    "fields": {
+      "order_id": 2,
+      "product_id": 86,
+      "quantity": 2,
+      "price": "2499"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 7,
+    "fields": {
+      "order_id": 3,
+      "product_id": 61,
+      "quantity": 1,
+      "price": "29999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 8,
+    "fields": {
+      "order_id": 3,
+      "product_id": 101,
+      "quantity": 1,
+      "price": "3999"
+    }
+  },
+  {
+    "model": "orders.OrderItem",
+    "pk": 9,
+    "fields": {
+      "order_id": 4,
+      "product_id": 25,
+      "quantity": 1,
+      "price": "89999"
+    }
+  }
+]

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import mimetypes
 import os
 
 from django.utils.translation import gettext_lazy as _
@@ -69,12 +68,13 @@ if DEBUG:
     ]
 
 
-# BOOTSTRAP5 = {
-#     "css_url": {
-#         "ar": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css",
-#         "default": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
-#     },
-# }
+BOOTSTRAP5 = {
+    # Standard LTR Bootstrap; RTL is loaded conditionally in base.html via {% if LANGUAGE_CODE == 'ar' %}
+    "css_url": {
+        "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
+        "crossorigin": "anonymous",
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -95,7 +95,7 @@ if DEBUG:
     ]
 
 
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 1 week
 
 ROOT_URLCONF = "core.urls"

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
+from django.core.cache import cache
 from asgiref.sync import sync_to_async
 
 from products.models import Product
@@ -15,6 +16,13 @@ def get_cart(request):
 def save_cart(request, cart):
     request.session["cart"] = cart
     request.session.modified = True
+    _invalidate_cart_cache(request)
+
+
+def _invalidate_cart_cache(request):
+    """Invalidate cart context processor cache after cart changes."""
+    session_key = request.session.session_key or "anon"
+    cache.delete(f"cart_ctx_{session_key}")
 
 
 async def _build_cart_context(request):

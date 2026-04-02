@@ -15,7 +15,7 @@
   --radius-lg:   20px;
   --font-head:   'Sora', sans-serif;
   --font-body:   'DM Sans', sans-serif;
-  --font-mono:   'JetBrains Mono', monospace;
+  --font-mono:   ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --primary-glow: #10b981;
   --bg-dark: #0f172a;
   --bg-card: #ffffff;

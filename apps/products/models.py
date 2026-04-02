@@ -7,6 +7,9 @@ class Category(models.Model):
     name_ar = models.CharField(max_length=255, blank=True, verbose_name="Name (Arabic)")
     slug = models.SlugField(max_length=255, unique=True)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
+    image_link = models.URLField(
+        blank=True, null=True, help_text="External image URL (alternative to uploading)"
+    )
 
     class Meta:
         verbose_name_plural = "Categories"

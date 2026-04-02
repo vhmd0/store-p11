@@ -14,7 +14,25 @@ document.addEventListener('DOMContentLoaded', function () {
   initCart();
   initWishlist();
   initPasswordToggle();
+  initLangSwitcher();
 });
+
+// Language Switcher Loading State
+function initLangSwitcher() {
+  const langLinks = document.querySelectorAll('.lang-switcher a');
+  langLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Show a subtle loading state if needed, but since it's a fast redirect,
+      // just ensuring it doesn't double-click.
+      if (this.classList.contains('switching')) {
+        e.preventDefault();
+        return;
+      }
+      this.classList.add('switching');
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    });
+  });
+}
 
 // RTL Dropdown Fix
 function fixRTLDropdowns() {

@@ -3,7 +3,7 @@
   --accent: #10b981;
   --nav-bg: #0f172a;
   --nav-bg2: #1e293b;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .s3r-nav {

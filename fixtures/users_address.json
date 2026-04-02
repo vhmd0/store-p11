@@ -1,0 +1,58 @@
+[
+  {
+    "model": "users.Address",
+    "pk": 1,
+    "fields": {
+      "user_id": 1,
+      "name": "Home",
+      "phone": "01012345678",
+      "address": "15 Mohamed Naguib St., Apt 5",
+      "city": "Cairo",
+      "area": "Downtown",
+      "is_default": true,
+      "created_at": "2025-01-02 10:00:00"
+    }
+  },
+  {
+    "model": "users.Address",
+    "pk": 2,
+    "fields": {
+      "user_id": 1,
+      "name": "Office",
+      "phone": "01012345679",
+      "address": "20 Tahrir St., Business Tower, Floor 10",
+      "city": "Cairo",
+      "area": "Tahrir",
+      "is_default": false,
+      "created_at": "2025-01-03 14:00:00"
+    }
+  },
+  {
+    "model": "users.Address",
+    "pk": 3,
+    "fields": {
+      "user_id": 2,
+      "name": "Home",
+      "phone": "01098765432",
+      "address": "42 Ahmed Zewail St., Villa 3",
+      "city": "Cairo",
+      "area": "Maadi",
+      "is_default": true,
+      "created_at": "2025-01-06 09:00:00"
+    }
+  },
+  {
+    "model": "users.Address",
+    "pk": 4,
+    "fields": {
+      "user_id": 3,
+      "name": "Home",
+      "phone": "01123456789",
+      "address": "8 El-Messaha St., Building B",
+      "city": "Giza",
+      "area": "Dokki",
+      "is_default": true,
+      "created_at": "2025-01-11 11:00:00"
+    }
+  }
+]

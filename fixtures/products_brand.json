@@ -1,0 +1,238 @@
+[
+  {
+    "model": "products.Brand",
+    "pk": 1,
+    "fields": {
+      "name": "Apple",
+      "name_ar": "أبل",
+      "slug": "apple"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 2,
+    "fields": {
+      "name": "Samsung",
+      "name_ar": "سامسونج",
+      "slug": "samsung"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 3,
+    "fields": {
+      "name": "Xiaomi",
+      "name_ar": "شاومي",
+      "slug": "xiaomi"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 4,
+    "fields": {
+      "name": "OnePlus",
+      "name_ar": "ون بلس",
+      "slug": "oneplus"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 5,
+    "fields": {
+      "name": "Google",
+      "name_ar": "جوجل",
+      "slug": "google"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 6,
+    "fields": {
+      "name": "Realme",
+      "name_ar": "ريلمي",
+      "slug": "realme"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 7,
+    "fields": {
+      "name": "Honor",
+      "name_ar": "هونر",
+      "slug": "honor"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 8,
+    "fields": {
+      "name": "OPPO",
+      "name_ar": "أوبو",
+      "slug": "oppo"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 9,
+    "fields": {
+      "name": "Dell",
+      "name_ar": "ديل",
+      "slug": "dell"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 10,
+    "fields": {
+      "name": "HP",
+      "name_ar": "إتش بي",
+      "slug": "hp"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 11,
+    "fields": {
+      "name": "Lenovo",
+      "name_ar": "لينوفو",
+      "slug": "lenovo"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 12,
+    "fields": {
+      "name": "ASUS",
+      "name_ar": "أسوس",
+      "slug": "asus"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 13,
+    "fields": {
+      "name": "Acer",
+      "slug": "acer"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 14,
+    "fields": {
+      "name": "MSI",
+      "slug": "msi"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 15,
+    "fields": {
+      "name": "Huawei",
+      "slug": "huawei"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 16,
+    "fields": {
+      "name": "Sony",
+      "slug": "sony"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 17,
+    "fields": {
+      "name": "Bose",
+      "slug": "bose"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 18,
+    "fields": {
+      "name": "JBL",
+      "slug": "jbl"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 19,
+    "fields": {
+      "name": "Sennheiser",
+      "slug": "sennheiser"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 20,
+    "fields": {
+      "name": "Marshall",
+      "slug": "marshall"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 21,
+    "fields": {
+      "name": "Anker",
+      "slug": "anker"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 22,
+    "fields": {
+      "name": "Spigen",
+      "slug": "spigen"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 23,
+    "fields": {
+      "name": "Baseus",
+      "slug": "baseus"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 24,
+    "fields": {
+      "name": "Belkin",
+      "slug": "belkin"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 25,
+    "fields": {
+      "name": "TP-Link",
+      "slug": "tp-link"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 26,
+    "fields": {
+      "name": "Ring",
+      "slug": "ring"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 27,
+    "fields": {
+      "name": "Amazon",
+      "slug": "amazon"
+    }
+  },
+  {
+    "model": "products.Brand",
+    "pk": 28,
+    "fields": {
+      "name": "Philips Hue",
+      "slug": "philips-hue"
+    }
+  }
+]

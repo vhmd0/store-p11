@@ -1,7 +1,9 @@
+import asyncio
+from asgiref.sync import sync_to_async
 from django.core.cache import cache
 from django.shortcuts import render
 from django.db.models import Count
-from django.views.decorators.http import require_POST
+from django.utils.http import url_has_allowed_host_and_scheme
 from products.models import Category, Product
 from .models import Banner
 from django.urls import translate_url
@@ -9,15 +11,46 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 
 
-@require_POST
 def set_language_custom(request):
-    next_url = request.POST.get("next", "/")
-    lang_code = request.POST.get("language")
+    """
+    Smarter and safer language switcher.
+    Handles both GET and POST, redirects to translated URL, and prevents open redirects.
+    """
+    if request.method == "POST":
+        next_url = request.POST.get("next", "/")
+        lang_code = request.POST.get("language")
+    else:
+        next_url = request.GET.get("next", "/")
+        lang_code = request.GET.get("language")
+
+    # Security: Ensure next_url is local
+    if not url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = "/"
+
+    if not lang_code or lang_code not in dict(settings.LANGUAGES):
+        return HttpResponseRedirect(next_url)
+
     # Translate the URL to the new language (adds/removes prefix)
     translated_url = translate_url(next_url, lang_code)
+
+    # If translate_url failed (e.g. invalid URL), fallback to home
+    if not translated_url:
+        translated_url = f"/{lang_code}/" if lang_code else "/"
+
     response = HttpResponseRedirect(translated_url)
-    # Optional: set the language cookie for consistency
-    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang_code)
+
+    # Persist preference in cookie
+    response.set_cookie(
+        settings.LANGUAGE_COOKIE_NAME,
+        lang_code,
+        max_age=settings.LANGUAGE_COOKIE_AGE,
+        path="/",
+        samesite="Lax",
+    )
     return response
 
 

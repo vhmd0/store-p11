@@ -6,10 +6,16 @@ class Banner(models.Model):
     """Hero banner carousel for homepage."""
 
     image = models.ImageField(upload_to="banners/")
+    image_link = models.URLField(
+        blank=True, null=True, help_text="External image URL"
+    )
     image_mobile = models.ImageField(
         upload_to="banners/mobile/",
         blank=True,
         help_text="Optional mobile-specific image",
+    )
+    image_mobile_link = models.URLField(
+        blank=True, null=True, help_text="External mobile image URL"
     )
     title = models.CharField(max_length=200, blank=True)
     subtitle = models.TextField(blank=True)

@@ -1,0 +1,290 @@
+[
+  {
+    "model": "products.Review",
+    "pk": 1,
+    "fields": {
+      "product_id": 1,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "Amazing phone! The camera quality is outstanding and the titanium design feels premium. Battery life is great.",
+      "created_at": "2024-10-15 14:30:00",
+      "updated_at": "2024-10-15 14:30:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 2,
+    "fields": {
+      "product_id": 1,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Best iPhone I have ever used. The Action Button is a game changer.",
+      "created_at": "2024-11-20 10:00:00",
+      "updated_at": "2024-11-20 10:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 3,
+    "fields": {
+      "product_id": 1,
+      "user_id": 3,
+      "rating": 4,
+      "comment": "Great phone but the price is very high. Camera is excellent though.",
+      "created_at": "2024-12-05 16:45:00",
+      "updated_at": "2024-12-05 16:45:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 4,
+    "fields": {
+      "product_id": 4,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "Galaxy S24 Ultra is incredible! The S Pen is so useful and the camera system is amazing.",
+      "created_at": "2024-02-10 11:00:00",
+      "updated_at": "2024-02-10 11:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 5,
+    "fields": {
+      "product_id": 4,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Best Android phone right now. The AI features are genuinely useful.",
+      "created_at": "2024-03-15 09:30:00",
+      "updated_at": "2024-03-15 09:30:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 6,
+    "fields": {
+      "product_id": 9,
+      "user_id": 1,
+      "rating": 4,
+      "comment": "Xiaomi 14 Pro is a great flagship killer. The Leica camera is fantastic.",
+      "created_at": "2024-04-20 13:00:00",
+      "updated_at": "2024-04-20 13:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 7,
+    "fields": {
+      "product_id": 16,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "Pixel 8 Pro has the best camera on any phone. Magic Eraser is incredible!",
+      "created_at": "2024-01-10 15:00:00",
+      "updated_at": "2024-01-10 15:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 8,
+    "fields": {
+      "product_id": 16,
+      "user_id": 3,
+      "rating": 5,
+      "comment": "Pure Android experience with amazing AI features. 7 years of updates is outstanding.",
+      "created_at": "2024-02-25 10:30:00",
+      "updated_at": "2024-02-25 10:30:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 9,
+    "fields": {
+      "product_id": 21,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "MacBook Pro M3 Pro is a powerhouse. Battery life is insane - lasts all day!",
+      "created_at": "2024-01-05 12:00:00",
+      "updated_at": "2024-01-05 12:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 10,
+    "fields": {
+      "product_id": 21,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Best laptop for professionals. The display is stunning.",
+      "created_at": "2024-02-20 14:00:00",
+      "updated_at": "2024-02-20 14:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 11,
+    "fields": {
+      "product_id": 25,
+      "user_id": 1,
+      "rating": 4,
+      "comment": "Beautiful OLED display and great performance. A bit pricey but worth it.",
+      "created_at": "2023-08-10 11:00:00",
+      "updated_at": "2023-08-10 11:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 12,
+    "fields": {
+      "product_id": 41,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "AirPods Pro 2 are the best wireless earbuds. The noise cancellation is amazing!",
+      "created_at": "2023-10-01 09:00:00",
+      "updated_at": "2023-10-01 09:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 13,
+    "fields": {
+      "product_id": 41,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Best sound quality and comfortable fit. Battery life is excellent.",
+      "created_at": "2023-11-15 16:00:00",
+      "updated_at": "2023-11-15 16:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 14,
+    "fields": {
+      "product_id": 41,
+      "user_id": 3,
+      "rating": 4,
+      "comment": "Great earbuds, but I wish they had better bass.",
+      "created_at": "2023-12-20 10:00:00",
+      "updated_at": "2023-12-20 10:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 15,
+    "fields": {
+      "product_id": 46,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "Sony WH-1000XM5 are the best noise-canceling headphones. Incredibly comfortable!",
+      "created_at": "2023-06-10 14:00:00",
+      "updated_at": "2023-06-10 14:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 16,
+    "fields": {
+      "product_id": 46,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Best headphones I have ever owned. The sound quality is exceptional.",
+      "created_at": "2023-07-25 11:00:00",
+      "updated_at": "2023-07-25 11:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 17,
+    "fields": {
+      "product_id": 61,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "iPad Pro M4 is incredibly powerful. The XDR display is stunning!",
+      "created_at": "2024-06-20 10:00:00",
+      "updated_at": "2024-06-20 10:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 18,
+    "fields": {
+      "product_id": 61,
+      "user_id": 3,
+      "rating": 5,
+      "comment": "Perfect for creative professionals. Runs all apps smoothly.",
+      "created_at": "2024-07-15 15:00:00",
+      "updated_at": "2024-07-15 15:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 19,
+    "fields": {
+      "product_id": 66,
+      "user_id": 1,
+      "rating": 4,
+      "comment": "Great tablet for productivity. The S Pen is very responsive.",
+      "created_at": "2023-09-01 12:00:00",
+      "updated_at": "2023-09-01 12:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 20,
+    "fields": {
+      "product_id": 101,
+      "user_id": 1,
+      "rating": 4,
+      "comment": "Nest Hub is great for controlling smart home devices. Sleep sensing is useful.",
+      "created_at": "2022-06-10 09:00:00",
+      "updated_at": "2022-06-10 09:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 21,
+    "fields": {
+      "product_id": 101,
+      "user_id": 2,
+      "rating": 5,
+      "comment": "Perfect bedside smart display. Sound quality is good for the size.",
+      "created_at": "2022-07-20 14:00:00",
+      "updated_at": "2022-07-20 14:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 22,
+    "fields": {
+      "product_id": 105,
+      "user_id": 1,
+      "rating": 4,
+      "comment": "Echo Dot is great value. Alexa works well for basic tasks.",
+      "created_at": "2023-01-15 11:00:00",
+      "updated_at": "2023-01-15 11:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 23,
+    "fields": {
+      "product_id": 109,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "TP-Link Tapo C200 offers great value. Easy setup and clear video quality.",
+      "created_at": "2022-05-10 10:00:00",
+      "updated_at": "2022-05-10 10:00:00"
+    }
+  },
+  {
+    "model": "products.Review",
+    "pk": 24,
+    "fields": {
+      "product_id": 109,
+      "user_id": 2,
+      "rating": 4,
+      "comment": "Good budget security camera. The app is user-friendly.",
+      "created_at": "2022-06-25 13:00:00",
+      "updated_at": "2022-06-25 13:00:00"
+    }
+  }
+]

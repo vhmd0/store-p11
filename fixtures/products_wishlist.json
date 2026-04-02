@@ -1,0 +1,110 @@
+[
+  {
+    "model": "products.Wishlist",
+    "pk": 1,
+    "fields": {
+      "user_id": 1,
+      "product_id": 22,
+      "created_at": "2025-01-10 10:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 2,
+    "fields": {
+      "user_id": 1,
+      "product_id": 49,
+      "created_at": "2025-01-11 14:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 3,
+    "fields": {
+      "user_id": 1,
+      "product_id": 66,
+      "created_at": "2025-01-12 09:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 4,
+    "fields": {
+      "user_id": 1,
+      "product_id": 101,
+      "created_at": "2025-01-13 16:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 5,
+    "fields": {
+      "user_id": 2,
+      "product_id": 1,
+      "created_at": "2025-01-08 11:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 6,
+    "fields": {
+      "user_id": 2,
+      "product_id": 34,
+      "created_at": "2025-01-09 15:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 7,
+    "fields": {
+      "user_id": 2,
+      "product_id": 46,
+      "created_at": "2025-01-10 10:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 8,
+    "fields": {
+      "user_id": 2,
+      "product_id": 61,
+      "created_at": "2025-01-11 13:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 9,
+    "fields": {
+      "user_id": 3,
+      "product_id": 4,
+      "created_at": "2025-01-07 12:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 10,
+    "fields": {
+      "user_id": 3,
+      "product_id": 21,
+      "created_at": "2025-01-08 09:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 11,
+    "fields": {
+      "user_id": 3,
+      "product_id": 41,
+      "created_at": "2025-01-09 14:00:00"
+    }
+  },
+  {
+    "model": "products.Wishlist",
+    "pk": 12,
+    "fields": {
+      "user_id": 3,
+      "product_id": 62,
+      "created_at": "2025-01-10 11:00:00"
+    }
+  }
+]

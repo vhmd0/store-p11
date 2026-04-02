@@ -1,10 +1,13 @@
+from django.core.cache import cache
+
 from products.models import Product
 
 
 def cart(request):
     """
-    Make cart items, total and count available globally for the offcanvas panel (Sync).
-    Single query — no N+1.
+    Make cart items, total and count available globally for the offcanvas panel.
+    Uses Django cache to avoid re-fetching products on every request.
+    Cache is invalidated by cart_add/cart_remove views.
     """
     raw_cart = request.session.get("cart", {})
 
@@ -15,6 +18,16 @@ def cart(request):
     cart_count = sum(raw_cart.values())
     if cart_count == 0:
         return {"cart_items": [], "cart_total": 0, "cart_count": 0}
+
+    # Build a fingerprint of the cart to use as cache key
+    cart_key = "|".join(f"{k}:{v}" for k, v in sorted(raw_cart.items()))
+    session_key = request.session.session_key or "anon"
+    cache_key = f"cart_ctx_{session_key}"
+
+    # Check if cached cart matches current cart fingerprint
+    cached = cache.get(cache_key)
+    if cached and cached.get("key") == cart_key:
+        return cached["data"]
 
     # Single query — no N+1
     product_ids = [int(pid) for pid in raw_cart]
@@ -36,4 +49,9 @@ def cart(request):
                 {"product": product, "quantity": quantity, "subtotal": subtotal}
             )
 
-    return {"cart_items": items, "cart_total": total, "cart_count": actual_count}
+    result = {"cart_items": items, "cart_total": total, "cart_count": actual_count}
+
+    # Cache for 60 seconds (invalidated by cart views on change)
+    cache.set(cache_key, {"key": cart_key, "data": result}, 60)
+
+    return result
