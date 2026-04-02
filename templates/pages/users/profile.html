@@ -7,7 +7,7 @@
 
 {% block content %}
 
-{# ── Breadcrumb ──────────────────────────────── #}
+
 <nav aria-label="breadcrumb" class="mb-4">
   <ol class="breadcrumb mb-0">
     <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house me-1"></i>{% trans "Home" %}</a></li>
@@ -16,10 +16,6 @@
 </nav>
 
 <div class="row g-4">
-
-    {# ═══════════════════════════════════════════
-       Sidebar
-       ═══════════════════════════════════════════ #}
     <div class="col-lg-3">
         <div class="card card-shadcn border-0 overflow-hidden">
             <div class="card-body p-0">
@@ -119,9 +115,7 @@
         </div>
     </div>
 
-    {# ═══════════════════════════════════════════
-       Main Content
-       ═══════════════════════════════════════════ #}
+
     <div class="col-lg-9">
 
         {# ── Personal Information ── #}

@@ -169,7 +169,6 @@ async def product_detail(request, slug):
     )
 
 
-@sync_to_async
 @login_required
 def add_review(request, product_id):
     """Add or update a product review."""
@@ -179,7 +178,7 @@ def add_review(request, product_id):
     form = RF(request.POST)
 
     if form.is_valid():
-        review, created = Review.objects.update_or_create(
+        Review.objects.update_or_create(
             product=product,
             user=request.user.profile,
             defaults={
@@ -260,7 +259,6 @@ async def category_detail(request, slug):
     )
 
 
-@sync_to_async
 @login_required
 def wishlist_list(request):
     """List products in user's wishlist."""
@@ -284,7 +282,6 @@ def wishlist_list(request):
     )
 
 
-@sync_to_async
 @login_required
 @require_POST
 def toggle_wishlist(request, product_id):

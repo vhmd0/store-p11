@@ -4,7 +4,7 @@
 {% load humanize %}
 {% load static %}
 
-{% block title %}{{ product.name }} — SMART S3R{% endblock %}
+{% block title %}{{ product.get_name }} — SMART S3R{% endblock %}
 
 {% block content %}
 
@@ -14,9 +14,9 @@
     <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="bi bi-house me-1"></i>{% trans "Home" %}</a></li>
     <li class="breadcrumb-item"><a href="{% url 'categories:categories' %}">{% trans "Store" %}</a></li>
     {% if product.category %}
-    <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.get_name }}</a></li>
     {% endif %}
-    <li class="breadcrumb-item active">{{ product.name }}</li>
+    <li class="breadcrumb-item active">{{ product.get_name }}</li>
   </ol>
 </nav>
 
@@ -28,9 +28,9 @@
   <div class="col-lg-6">
     <div class="card border-0 shadow-sm overflow-hidden position-sticky" style="top: 80px;">
       {% if product.img %}
-        <img src="{{ product.img.url }}" alt="{{ product.name }}" class="w-100" style="min-height: 480px; object-fit: contain; padding: 24px;" loading="eager">
+        <img src="{{ product.img.url }}" alt="{{ product.get_name }}" class="w-100" style="min-height: 480px; object-fit: contain; padding: 24px;" loading="eager">
       {% elif product.img_link %}
-        <img src="{{ product.img_link }}" alt="{{ product.name }}" class="w-100" style="min-height: 480px; object-fit: contain; padding: 24px;" loading="eager">
+        <img src="{{ product.img_link }}" alt="{{ product.get_name }}" class="w-100" style="min-height: 480px; object-fit: contain; padding: 24px;" loading="eager">
       {% else %}
         <div class="bg-light d-flex align-items-center justify-content-center" style="min-height: 480px;"><i class="bi bi-phone display-1 text-muted"></i></div>
       {% endif %}
@@ -45,14 +45,14 @@
 
       {# Badges #}
       <div class="d-flex align-items-center gap-2 mb-3">
-        <c-badge variant="dark">{{ product.brand.name }}</c-badge>
+        <c-badge variant="dark">{{ product.brand.get_name }}</c-badge>
         {% if product.type %}
           <span class="badge bg-light text-body border">{{ product.type }}</span>
         {% endif %}
       </div>
 
       {# Title #}
-      <h1 class="fw-bold font-heading" style="font-size: clamp(1.4rem, 3vw, 2rem);">{{ product.name }}</h1>
+      <h1 class="fw-bold font-heading" style="font-size: clamp(1.4rem, 3vw, 2rem);">{{ product.get_name }}</h1>
 
       {# Rating #}
       <div class="d-flex align-items-center gap-2 pb-3 border-bottom mb-4">
@@ -206,11 +206,11 @@
         <tbody>
           <tr>
             <th>{% trans "Brand" %}</th>
-            <td>{{ product.brand.name }}</td>
+            <td>{{ product.brand.get_name }}</td>
           </tr>
           <tr>
             <th>{% trans "Category" %}</th>
-            <td>{{ product.category.name }}</td>
+            <td>{{ product.category.get_name }}</td>
           </tr>
           <tr>
             <th>{% trans "Condition" %}</th>
@@ -301,28 +301,40 @@
         <h5 class="modal-title" id="reviewModalLabel">{% trans "Write a Review" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="{% url 'products:add_review' product.id %}" method="post">
+      <form action="{% url 'products:add_review' product.id %}" method="post"
+            x-data="{ 
+                rating: {{ user_review.rating|default:0 }}, 
+                hover: 0,
+                comment: '{{ user_review.comment|default:''|escapejs }}'
+            }">
         {% csrf_token %}
         <div class="modal-body pt-0">
           {# Star Rating #}
-          <div class="mb-3">
-            <label class="form-label small fw-semibold">{% trans "Your Rating" %}</label>
-            <div class="d-flex gap-1" id="starRating">
+          <div class="mb-3 text-center">
+            <label class="form-label small fw-semibold d-block">{% trans "Your Rating" %}</label>
+            <div class="d-flex justify-content-center gap-2 py-2">
               {% for i in "12345" %}
-              <button type="button" class="star-btn btn btn-link p-0 text-warning fs-5" data-value="{{ forloop.counter }}">
-                <i class="bi bi-star"></i>
+              <button type="button" 
+                      class="star-btn btn btn-link p-0 text-warning fs-3 border-0 shadow-none"
+                      @click="rating = {{ forloop.counter }}"
+                      @mouseenter="hover = {{ forloop.counter }}"
+                      @mouseleave="hover = 0">
+                <i class="bi" :class="(hover || rating) >= {{ forloop.counter }} ? 'bi-star-fill' : 'bi-star'"></i>
               </button>
               {% endfor %}
             </div>
-            <input type="hidden" name="rating" id="review-rating-input" 
-                   value="{{ user_review.rating|default:'0' }}">
+            <input type="hidden" name="rating" x-model="rating">
           </div>
           
           {# Comment #}
           <div class="mb-3">
             <label class="form-label small fw-semibold">{% trans "Your Review" %}</label>
-            <textarea name="comment" class="form-control" rows="4" 
-                      placeholder="{% trans 'Share your experience with this product...' %}">{{ user_review.comment|default:'' }}</textarea>
+            <textarea name="comment" 
+                      class="form-control rounded-4 border-light-subtle shadow-sm" 
+                      rows="4" 
+                      x-model="comment"
+                      style="text-align: inherit;"
+                      placeholder="{% trans 'Share your experience with this product...' %}"></textarea>
           </div>
           
           {% if user_review %}
@@ -333,8 +345,11 @@
           {% endif %}
         </div>
         <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-          <button type="submit" class="btn btn-primary" id="submitReview" disabled>
+          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+          <button type="submit" 
+                  class="btn btn-primary rounded-pill px-4" 
+                  :class="rating == 0 ? 'opacity-50' : ''"
+                  :disabled="rating == 0">
             {% trans "Submit Review" %}
           </button>
         </div>
