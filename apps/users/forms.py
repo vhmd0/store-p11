@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from .models import Profile, Address
+from .models import Profile, Address, Gender
 
 
 class UserRegisterForm(UserCreationForm):
@@ -141,10 +141,41 @@ class ProfileUpdateForm(forms.ModelForm):
         ),
         required=False,
     )
+    date_of_birth = forms.DateField(
+        label=_("Date of Birth"),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        required=False,
+    )
+    gender = forms.ChoiceField(
+        label=_("Gender"),
+        choices=[("", _("Select"))] + list(Gender.choices),
+        widget=forms.Select(attrs={"class": "form-select"}),
+        required=False,
+    )
+    email_marketing = forms.BooleanField(
+        label=_("Receive email promotions"),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+    )
+    push_notifications = forms.BooleanField(
+        label=_("Push notifications"),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+    )
 
     class Meta:
         model = Profile
-        fields = ["first_name", "last_name", "phone", "address", "avatar"]
+        fields = [
+            "first_name",
+            "last_name",
+            "phone",
+            "address",
+            "avatar",
+            "date_of_birth",
+            "gender",
+            "email_marketing",
+            "push_notifications",
+        ]
 
 
 class AddressForm(forms.ModelForm):

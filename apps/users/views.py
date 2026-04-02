@@ -3,6 +3,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import gettext as _
 from .forms import UserRegisterForm, ProfileUpdateForm, AddressForm
@@ -91,6 +92,10 @@ def profile(request):
         {
             "profile_obj": profile_obj,
             "recent_orders": recent_orders,
+            "order_count": Order.objects.filter(user=request.user).count(),
+            "wishlist_count": request.user.profile.wishlist.count(),
+            "review_count": request.user.profile.reviews.count(),
+            "address_count": Address.objects.filter(user=request.user).count(),
             "form": form,
         },
     )

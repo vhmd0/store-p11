@@ -2,6 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
+
+
+class Gender(models.TextChoices):
+    MALE = "male", _("Male")
+    FEMALE = "female", _("Female")
+    UNSPECIFIED = "unspecified", _("Prefer not to say")
 
 
 class Profile(models.Model):
@@ -11,6 +18,18 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
+    date_of_birth = models.DateField(
+        blank=True, null=True, verbose_name=_("Date of birth")
+    )
+    gender = models.CharField(
+        max_length=15, choices=Gender.choices, default=Gender.UNSPECIFIED, blank=True
+    )
+    email_marketing = models.BooleanField(
+        default=False, verbose_name=_("Email promotions")
+    )
+    push_notifications = models.BooleanField(
+        default=True, verbose_name=_("Push notifications")
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
