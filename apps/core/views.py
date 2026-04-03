@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.shortcuts import render
 from django.db.models import Count
 from django.utils.http import url_has_allowed_host_and_scheme
-from products.models import Category, Product
+from apps.products.models import Category, Product
 from .models import Banner
 from django.urls import translate_url
 from django.http import HttpResponseRedirect
@@ -59,8 +59,9 @@ def home(request):
     if categories is None:
         # Get top 4 categories by product count for better homepage relevancy
         categories = list(
-            Category.objects.annotate(product_count=Count("products"))
-            .order_by("-product_count")[:4]
+            Category.objects.annotate(product_count=Count("products")).order_by(
+                "-product_count"
+            )[:4]
         )
         cache.set("home_categories", categories, 3600)
 
@@ -76,6 +77,7 @@ def home(request):
                 "img",
                 "img_link",
                 "price",
+                "discount_price",
                 "brand__id",
                 "brand__name",
             )
@@ -97,9 +99,11 @@ def home(request):
                 "img",
                 "img_link",
                 "price",
+                "discount_price",
                 "brand__id",
                 "brand__name",
-            )[:8]
+            )
+            .all()[:8]
         )
         cache.set("most_liked_products", most_liked, 1800)
 

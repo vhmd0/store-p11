@@ -44,6 +44,7 @@ USE_X_FORWARDED_HOST = True
 
 INSTALLED_APPS = [
     "jazzmin",
+    "django_htmx",
     "django_cotton",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,13 +53,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "core",
-    "users",
-    "products",
-    "cart",
-    "orders",
+    "apps.core",
+    "apps.users",
+    "apps.products",
+    "apps.cart",
+    "apps.orders",
     "django_bootstrap5",
     "django_bootstrap_icons",
+    # "django_components",
 ]
 
 if DEBUG:
@@ -86,6 +88,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 if DEBUG:

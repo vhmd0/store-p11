@@ -3,8 +3,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 
-from products.models import Product
-from orders.models import Order, OrderItem, OrderStatus, PaymentMethod, PaymentStatus
+from apps.products.models import Product
+from apps.orders.models import (
+    Order,
+    OrderItem,
+    OrderStatus,
+    PaymentMethod,
+    PaymentStatus,
+)
 
 
 def get_cart(request):

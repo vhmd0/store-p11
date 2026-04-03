@@ -8,8 +8,8 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Prefetch
 
-from products.models import Product, Category, Wishlist, Review
-from products.forms import ReviewForm
+from apps.products.models import Product, Category, Wishlist, Review
+from apps.products.forms import ReviewForm
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
